@@ -1,0 +1,350 @@
+id: P18
+title: "Multibit Electrically Reconfigurable Circularly Polarized Reflectarray Elements Based on Pancharatnam–Berry Phase Principle"
+venue: "IEEE AWPL, vol. 24, no. 12, pp. 4630–4634, Dec. 2025"
+created: "2026-08-10"
+
+map: |
+  你库里已经有一堆 1-bit 可重构反射阵：一个 PIN 二极管切两种状态，相位只有 0° 和 180° 两档。问题是档太少——相位量化误差大，旁瓣高、口径效率低。想加档，圆极化（CP）阵又很头疼：线极化可以靠变容管连续调谐，CP 的多比特电控一直没什么便宜好用的办法。
+
+  这篇的骚操作一句话：{{PB 相位::Pancharatnam–Berry 相位，几何相位的一种。圆极化波打到旋转 θ 角的各向异性单元上，反射波会白捡 2θ 的相位差——转多少得双倍，纯几何操作，不改变谐振}}说"转单元 θ 角，CP 反射相位变 2θ"，作者说——那我别真转，我在贴片周围摆一圈二极管，每次只接通一根不同方向的延时线，让电流路径"假装"单元转了 45°，就白捡 90° 相位。4 根线 = 2-bit，8 根线 = 3-bit，想几比特就摆几根。
+
+  结果：2-bit 单元实测 11.1–12.5 GHz 插损 <1 dB、四档相位间隔约 90°；16×16 阵列 ±60° 扫描，口径效率 39.1%，比之前用 8 个二极管做 2-bit 的方案省一半管子。验证手段也有讲究：用波导模拟器（WGS）只做一个 2×2 小样就等效测了无限大阵。
+
+chunks:
+  - id: c1
+    title: "引言：1-bit 的天花板"
+    minutes: 10
+    blocks:
+      - type: para
+        text: |
+          Abstract—P-i-n diode-based reconfigurable reflectarray antennas have gained attention for their flexible beam-steering, simplified design, and cost effectiveness. However, many existing designs offer only 1- or 2-bit phase reconfigurability, limiting radiation performance. In this letter, we present Ku-band reflectarray elements with both 2-bit and 3-bit electrical phase control for circular polarization. By leveraging the Pancharatnam–Berry phase principle, dynamic phase control is achieved through p-i-n diode switching. The proposed design is validated using a waveguide simulator (WGS), which confirms the 2-bit phase responses and shows excellent agreement with full-wave simulations. Measured results demonstrate 2-bit phase quantization over an 11.1 GHz to 12.5 GHz range (11.9% bandwidth) with insertion losses below 1.0 dB and cross-polarization levels under −15 dB. Furthermore, simulated performance of the 3-bit element reveals consistent 45° phase intervals. To verify array-level performance, 16 × 16 RRAs based on both 2-bit and 3-bit elements are implemented. This multibit reconfigurable strategy enhances reflectarray performance and offers increased design versatility for advanced Ku-band applications.
+      - type: aside
+        text: |
+          摘要就是全文的"电梯演讲"，三个数字先记住：11.9% 带宽、插损 <1 dB、交叉极化 <−15 dB。读完后文回来对照，看作者有没有兑现。
+
+          另外一个信号：{{WGS::waveguide simulator，波导模拟器}}出现在摘要里，说明"怎么测的"是这篇的卖点之一——CP 单元的波导测试此前没什么人做。
+      - type: para
+        text: |
+          Reconfigurable reflectarray (RRA) antennas with dynamic beam control have garnered significant attention for applications in wireless communications and sensing systems [1]. These antennas enable versatile manipulation of electromagnetic waves, supporting beam steering, information sensing, and imaging functionalities. In contrast to conventional phased arrays [2], [3], [4], which require bulky feeding networks and expensive transceiver modules, 1-bit RRAs employing spatial feeding techniques offer a cost-effective solution for wide-angle beam scanning [5], [6], [7]. RRAs are typically implemented using various tuning elements, including p-i-n diodes, varactors, radio-frequency microelectromechanical systems (RF-MEMS), graphene, and liquid crystals [1]. Among these, PIN diode-based 1-bit RRAs have attracted considerable interest due to their affordability, simplicity, and widespread availability [8]–[12]. As demonstrated in [9], altering the state of a p-i-n diode enables tuning of the resonant frequency and induces phase reversal, thereby achieving 1-bit phase adjustment for linearly polarized (LP) operation.
+      - type: aside
+        text: |
+          经典的开场三段论：相控阵太贵 → 空间馈电的反射阵便宜 → 便宜方案的扛把子是 PIN 二极管 1-bit。
+
+          彩蛋：文献 [1] 就是你库里的 [[P19]] 那篇 Hum 的综述，文献 [15]（下一段会出现）是你库里的 [[P05]]。这篇论文和你已有藏书的血缘很近。
+      - type: para
+        text: |
+          Researchers have further explored 1-bit circularly polarized (CP) RRAs based on p-i-n diodes [13], [14], [15] and by employing an element rotation method [16], which utilizes physical or mechanical rotation for phase tuning. However, 1-bit designs inherently suffer from phase quantization errors, resulting in reduced aperture efficiency and elevated sidelobe levels (SLLs). To mitigate these limitations, multibit phase control is essential. Existing approaches for multi-bit or continuous CP phase tuning include mechanical methods [17], [18], [19] and varactor-based designs [20]. In comparison, p-i-n diodes present a cost-effective alternative characterized by lower insertion losses and simpler biasing requirements, rendering them highly suitable for multibit CP RRAs.
+      - type: aside
+        text: |
+          这一段是全文的问题定义，题眼句："1-bit designs inherently suffer from phase quantization errors"——1-bit 的原罪是量化误差。相位只有两档，阵面上需要的连续相位被硬四舍五入，波束质量必然打折。
+
+          作者的排他论证也很干脆：机械旋转慢、变容管损耗大，PIN 二极管便宜损耗小——所以多比特 CP 也该用 PIN 做。问题是：怎么做？这就是下一棒的交接点。
+      - type: para
+        text: |
+          To date, only one study has demonstrated a p-i-n diode-based wideband 2-bit CP RRA with ±60° scanning and improved efficiency [21]. A similar principle has been applied using MEMS technology for 2-bit LP reconfigurability; however, this approach introduces additional complexity [22]. In this work, we present a Ku-band 2-/3-bit electrically controlled CP RRA element based on an innovative design approach that is scalable to multibit phase control. The key innovation involves the integration of multiple p-i-n diodes around the reflective patch, enabling simulation of physical rotation via controlled diode switching to achieve the desired phase response.
+      - type: aside
+        text: |
+          全文题眼在这句："simulation of physical rotation via controlled diode switching"——用二极管开关**模拟物理旋转**。
+
+          记住它。前面说机械旋转慢，但"旋转"这个物理图像本身是好东西（PB 相位天然给 CP 相位），所以作者的思路不是抛弃旋转，而是**用电路伪造旋转**。这是典型的"把机械问题电子化"。
+
+          另外注意和 [21] 的对比伏笔：人家做了 2-bit CP，但用了 8 个二极管。作者最后会亮出"我只要 4 个"的底牌。
+      - type: para
+        text: |
+          This letter also presents the use of the waveguide simulator (WGS) method for CP element testing. Section II details the design and operating mechanism. Section III outlines the measurement setups and experimental results, and Section IV concludes the letter.
+      - type: terms
+        items:
+          - term: "phase quantization error"
+            def: "相位量化误差。阵面需要的补偿相位是连续的，但只有 2^n 档可用，硬凑出来的误差。1-bit 时最大误差 ±90°，是旁瓣和效率损失的元凶。"
+          - term: "aperture efficiency"
+            def: "口径效率。实际增益相对理想均匀口径增益的比值，反射阵的终极成绩单一。这篇做到 39.1%。"
+          - term: "SLL (sidelobe level)"
+            def: "旁瓣电平。主瓣之外最大副瓣的相对强度，量化误差的直接受害者。"
+          - term: "spatial feeding"
+            def: "空间馈电。馈源在远处直接照射阵面，不需要功分网络，反射阵便宜的根本原因。"
+    ticket:
+      - q: "作者为什么坚持用 PIN 二极管而不是变容管做多比特 CP？"
+        a: "引言明说：变容管连续可调但插入损耗大；PIN 二极管损耗低、偏置简单、便宜好买。代价是只能离散档位——所以用多摆几个管子换档位数。"
+      - q: "『用二极管开关模拟物理旋转』模拟的是什么物理图像？"
+        a: "PB 相位：单元物理旋转 θ，CP 反射相位变 2θ。作者不真转单元，而是切换接通的延时线方向，让电流分布等效于单元转到了那个角度。"
+
+  - id: c2
+    title: "PB 相位：转一倍，得两倍"
+    minutes: 6
+    blocks:
+      - type: para
+        text: |
+          The proposed RRA element adopts the Pancharatnam–Berry (PB) phase principle [23], [24], [25], where the CP reflection phase equals twice the element's rotation angle. For clarity, we briefly introduce the PB principle used here. As shown in Fig. 1(a), under left-hand circular polarization (LHCP) excitation along the $-z$-direction, the incident electric fields ($\vec{E}^{inc}$) is written as
+      - type: math
+        tex: "\\vec{E}^{inc} = \\vec{E}_i \\begin{pmatrix} 1 \\\\ -j \\end{pmatrix} e^{j(\\omega t + kz)} \\qquad (1)"
+      - type: para
+        text: |
+          Here, $\vec{E}_i$ denotes the vector electric of the incident wave, $k$ is the free-space wave number, $\omega$ is the angular frequency.
+      - type: figure
+        src: /figures/P18/fig1.png
+        caption: "Fig. 1. Diagrams of a CP reflected patch. (a) Reference element with 0° phase shift. (b) θ° rotated element with 2θ phase shift."
+      - type: para
+        text: |
+          According to the basic rotational transformation matrix [24], when the element is rotated counterclockwise by an angle $\theta$ [Fig. 1(b)], the corresponding rotation matrix is $T = \begin{pmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{pmatrix}$. Then, the reflected wave can be written as
+      - type: math
+        tex: "\\vec{E}^{refl} = \\vec{E}_i\\, T \\begin{pmatrix} e^{j\\varphi_x} & 0 \\\\ 0 & e^{j\\varphi_y} \\end{pmatrix} T^{-1} \\begin{pmatrix} 1 \\\\ -j \\end{pmatrix} e^{j(\\omega t - kz)} \\qquad (2)"
+      - type: para
+        text: |
+          where $\varphi_x$ and $\varphi_y$ represents the reflection phases for x- and y-polar components. If $\varphi_x = \varphi_y + \pi$, we have
+      - type: math
+        tex: "\\vec{E}^{refl} = -\\vec{E}_i \\begin{pmatrix} 1 \\\\ j \\end{pmatrix} e^{j(\\varphi_x - 2\\theta)} e^{j(\\omega t - kz)} \\qquad (3)"
+      - type: para
+        text: |
+          This represents an LHCP reflected wave with a phase shift of $\varphi_x - 2\theta$, showing the CP reflection phase varies twice the cell's rotation angle. Conversely, under right-hand circularly polarized (RHCP) excitation, the phase shifts as $\varphi_x + 2\theta$.
+      - type: aside
+        text: |
+          公式 (1)→(3) 的推导看着唬人，其实就干了三件事：入射 CP 写成两个正交线极化（1, −j）→ 单元旋转用旋转矩阵 T 表示 → 反射时再乘各方向的反射相位。
+
+          真正要带走的是**结论和前提**：
+
+          结论：$\varphi_{cp} = \varphi_x - 2\theta$。转 $\theta$ 白捡 $-2\theta$ 相位，这就是"转一倍得两倍"，也是全文一切设计的地基。
+
+          前提：$\varphi_x = \varphi_y + \pi$，即单元对两个正交线极化的反射相位要差 180°——也就是单元得是"一个极化谐振、另一个极化不谐振"的各向异性结构（磁电偶极子那类结构的拿手好戏）。后面 Fig. 3(a) 的仿真就是在验证这个前提成立。
+
+          还有一个 RHCP 变 +2θ 的小伏笔：同一个单元换个旋向相位反号，文末"换馈源喇叭旋向即可服务 RHCP"就靠它。
+      - type: terms
+        items:
+          - term: "LHCP / RHCP"
+            def: "左/右旋圆极化。电场矢量旋转方向相反的两种圆极化，互为交叉极化。"
+          - term: "rotation matrix"
+            def: "旋转矩阵。描述坐标系（或结构）转 θ 角后矢量分量怎么变的 2×2 矩阵，PB 推导的全部'机关'。"
+    ticket:
+      - q: "PB 相位成立的前提条件是什么？（不是结论，是前提）"
+        a: "单元对两个正交线极化的反射相位差必须是 180°（φx = φy + π）。没有各向异性就没有 PB 相位。"
+      - q: "单元转 45°，CP 反射相位变多少？2-bit 需要几档相位、对应几个'虚拟旋转角'？"
+        a: "变 90°。2-bit 需要 4 档相位（0/90/180/270°），对应 4 个虚拟旋转角（间隔 45°）——这就是下一节 4 根延时线的来历。"
+
+  - id: c3
+    title: "2-bit 单元：四根延时线伪造旋转"
+    minutes: 12
+    blocks:
+      - type: para
+        text: |
+          As shown in Fig. 2, the proposed 2-bit CP RRA element uses a dual-layer substrate without air gap, comprising a reflective patch and bias circuit separated by a ground plane. The upper substrate is Arlon AD255 (εr = 2.55, tanθ = 0.0014, h1 = 1.5 mm), and the lower is FR-4 (εr = 4.4, tanθ = 0.02, h3 = 0.5 mm), bonded with an FR-4 adhesive film (h2 = 0.1 mm). A regular octagonal patch on the upper layer connects to ground via a blind via, acting as the main scatterer for CP phase control. Four identical phase delay lines at 45° intervals integrate p-i-n diodes (P#1–P#4) to dynamically adjust current paths and electrical lengths for precise phase tuning.
+      - type: figure
+        src: /figures/P18/fig2.png
+        caption: "Fig. 2. Configuration of the designed 2-bit CP RRA element. r1 = 3.7, r2 = 0.2, d1 = 0.33, d2 = 0.4, l1 = 1.95, l2 = 0.1, w1 = 0.25, w2 = 0.13, h1 = 1.5, h2 = 0.1, h3 = 0.5, p1 = 12 (unit: mm)."
+      - type: aside
+        text: |
+          结构三层拆解：顶层 Arlon AD255（低损耗，射频层）上是正八边形贴片 + 四根互成 45° 的延时线，每根串一个 PIN 二极管；中间地平面隔离；底层 FR-4（便宜，直流层）走偏置线。
+
+          为什么八边形？要"假装旋转"就得有一个**旋转对称**的基底——八边形有 45° 旋转对称，四根延时线摆在四个对称方向上，接通哪一根，结构就"等效"转到哪一面。圆形/八边形是 PB 单元的标配，你库里的 [[P05]] 也是圆形贴片。
+
+          二极管等效模型也给了：OFF 是 30 fF 电容，ON 是 5.2 Ω 电阻（都串 30 pH 电感）——仿真是按这个非理想模型做的，不是理想开关。
+      - type: para
+        text: |
+          The DC bias circuit on the lower layer connects to delay lines through metallic vias. We employed the flip-chip MACOM MADP-000907-14020 PIN diode, modeled as an equivalent series circuit in simulations (Fig. 2). To save space, traditional quarter-wavelength radial stubs for RF signal choking were replaced by inductors. Each bias line includes two muRata LQW15AN3N2C00D (3.2 nH, SRF = 14 GHz) inductors, providing 6.4 nH for RF suppression.
+      - type: aside
+        text: |
+          工程细节，但值得学：偏置线怎么不给射频"漏口子"？传统做法是四分之一波长扇形 stub（radial stub）做射频扼流，占地方；这里换成两个 3.2 nH 集总电感串联，小巧且 14 GHz 自谐振频率盖过工作频段。做可重构单元时这种"直流干净、射频隔离"的偏置设计是通用痛点。
+      - type: para
+        text: |
+          Fig. 3(a) presents the simulated element response under two orthogonal incident waves, x′- and y′-polarizations, with P#2 "ON" and all other diodes "OFF," showing that the y′-polarized component follows an extended current path. The green dashed line indicates a roughly constant phase difference of 180° ± 10° between x′- and y′-components across 11.15 GHz to 12.2 GHz. Within this range, Sx′x′ and Sy′y′ magnitudes remain above −1 dB and approximately balanced, enabling the generation of a CP reflected wave with an axial ratio (AR) below 3 dB.
+      - type: figure
+        src: /figures/P18/fig3.png
+        caption: "Fig. 3. (a) Simulated characteristics with only P#2 turned on under x′- and y′-polarized incidence. (b) Ideal element configurations corresponding to 2-bit CP phase states."
+      - type: aside
+        text: |
+          还记得上一块的 PB 前提吗？φx = φy + π。这张图就是**前提验收报告**：绿虚线显示接通 P#2 后，x′ 和 y′ 两个正交分量的相位差在 11.15–12.2 GHz 稳定在 180°±10°。
+
+          机理也漂亮：接通一根延时线，等于给 y′ 方向的电流加了一段"加长跑道"（extended current path），跑道变长 → 相位延迟 → 和没加跑道的 x′ 方向拉开 180°。幅度两边都 >−1 dB 且相当，轴比 <3 dB，CP 成立。
+
+          一个反直觉点：**对称结构 + 一根不对称的线**就够了。单元本体保持完美对称，不对称性全部由"哪根线接通"来注入——这就是"虚拟旋转"的物理实质。
+      - type: para
+        text: |
+          To achieve 2-bit phase quantization with uniform 90° steps, the element emulates four rotational states at 45° intervals by electronically controlling integrated p-i-n diodes, while retaining a fixed physical structure. In operation, one diode is ON and the others are OFF, forming an asymmetric current path on the otherwise symmetric element. As shown in Fig. 3(b), selective diode switching effectively emulates physical rotation, enabling discrete 2-bit reflection phase control. With ON/OFF represented as binary 1/0, phase states are encoded using 4-bit control logic (Table I). Under LHCP illumination, the element provides four reflection phases (0, π/2, π, 3π/2), corresponding to 2-bit quantization. These states, S#1–S#4, represent virtual rotations defined in the idealized configuration of Fig. 2(b).
+      - type: figure
+        src: /figures/P18/tab1.png
+        caption: "TABLE I. Different codes of p-i-n diodes and phase responses of the element."
+      - type: aside
+        text: |
+          设计逻辑闭环了：4 根线互成 45° → 4 种接通方式 = 4 个虚拟旋转角 → PB 翻倍 → 4 档相位 0/90/180/270° = 2-bit。
+
+          控制码是 one-hot（1000/0100/0010/0001），任一时刻只通一个管子——简单、不容易烧管子、控制逻辑直白。
+
+          Table I 还有个隐藏信息：RHCP 入射时四档相位是 270/180/90/0°，顺序正好倒过来（PB 的 ±2θ 符号效应）。所以同一套硬件换个旋向照样用，只是码表反过来查。
+      - type: para
+        text: |
+          Simulation results were obtained in Ansys HFSS using Floquet excitation and primary–secondary boundaries. Fig. 4 shows the performance of four states under LHCP illumination. Owing to symmetry, states S#1 and S#4 exhibit similar amplitudes, as do S#2 and S#3. Fig. 4(a) shows copolarized (SLL) magnitudes above −1 dB and cross polarized (SRL) below −15 dB, yielding an AR under 3 dB from 11.17 GHz to 12.15 GHz. Fig. 4(b) confirms ∼90° phase differences among the four states across the band, verifying effective 2-bit CP phase quantization. Additionally, the response of state S#2 under oblique LHCP incidence shows stable copolarized magnitude and phase, with cross-polarized components below −15 dB up to 25°, demonstrating excellent angular stability. These results confirm the element's reliable 2-bit phase quantization under CP excitation, making it highly suitable for electronically scanned reflectarray applications.
+      - type: figure
+        src: /figures/P18/fig4.png
+        caption: "Fig. 4. Simulated performance of the 2-bit element: (a) reflection magnitude and (b) phase response under normal and oblique LHCP incidence (S#2)."
+      - type: aside
+        text: |
+          单元级成绩单：幅度 >−1 dB、交叉极化 <−15 dB、四态相位差 ~90°、斜入射 25° 以内不崩。
+
+          两个看论文的通用技巧：
+
+          1. "Owing to symmetry, S#1≈S#4, S#2≈S#3"——作者只画三条曲线是因为四态里有两对镜像，看图时别以为是漏了。
+          2. Floquet 边界 + 主从边界 = 无限大周期阵仿真，单元论文的标准做法。它假设环境是无限周期，和后面实测的 2×2 小样、16×16 阵列之间的差异，作者会用 WGS 来弥合——下一块就讲。
+      - type: terms
+        items:
+          - term: "phase delay line"
+            def: "相位延时线。一段蛇形微带线，接通后给电流加额外电长度，这里是'伪造旋转'的执行机构。"
+          - term: "one-hot 控制"
+            def: "任一时刻只有一个二极管导通的编码方式（1000/0100/…）。控制简单，但 n 档要 n 个管子。"
+          - term: "axial ratio (AR)"
+            def: "轴比。CP 纯度的度量，<3 dB 视为合格圆极化。两个正交分量幅度相等、相位差 90° 时 AR 最优。"
+          - term: "Floquet 边界"
+            def: "周期边界条件，仿一个单元等效无限大阵。反射阵单元仿真的标配。"
+    ticket:
+      - q: "为什么贴片要做成八边形而不是方形？"
+        a: "需要 45° 旋转对称的基底：四根延时线摆在四个对称方向，接通哪根就等效转到哪一面。方形只有 90° 对称，凑不出 4 个 45° 间隔的等效姿态。"
+      - q: "Fig. 3(a) 里接通 P#2 后，y′ 分量的相位为什么被拉低？"
+        a: "接通的延时线给 y′ 方向电流加了额外电长度（extended current path），路径变长相位滞后，和 x′ 拉开约 180°，凑齐 PB 前提。"
+      - q: "Table I 里 RHCP 的四档相位为什么是 270/180/90/0°？"
+        a: "PB 相位对 RHCP 变号（+2θ 而非 −2θ），所以同一控制码在 RHCP 下相位顺序整个反过来。"
+
+  - id: c4
+    title: "3-bit 扩展与波导模拟器实测"
+    minutes: 12
+    blocks:
+      - type: para
+        text: |
+          Building on the PB phase principle and the 2-bit implementation in Section II-A, a 3-bit CP RRA element is developed by adding four more phase delay lines, each integrated with a PIN diode, as shown in Fig. 5. The design features a circular reflective patch and eight identical delay lines with PIN switches (D#1–D#8). According to the PB principle, this design yields a theoretical 22.5° phase interval between adjacent lines. Similar to the 2-bit case, reflection phase control is achieved by switching the diodes. Fig. 5(b) and (c) shows the simulated coefficients and phases under LHCP incidence. From 11.3 GHz to 12.52 GHz, adjacent states exhibit ∼45° phase spacing, with copolarized magnitudes exceeding −1 dB and cross-polarized levels maintained below −15 dB.
+      - type: figure
+        src: /figures/P18/fig5.png
+        caption: "Fig. 5. (a) Configuration of the designed 3-bit CP RRA element. (b) Magnitudes of reflection coefficient. (c) Phases of SLL component under LHCP illumination. p2 = 11.6, r3 = 3.5, l3 = 1.7, l4 = 0.3, l5 = 0.8 (unit: mm)."
+      - type: aside
+        text: |
+          这块展示了设计真正的卖点：**可扩展性**。2-bit 到 3-bit 没有新原理，就是贴片换圆形、延时线 4 根变 8 根（间隔 22.5°，PB 翻倍成 45° 相位步进）。
+
+          "arbitrary-bit"的故事就这么讲圆了：想要 n bit，就摆 2^n 根线。当然物理上摆不下无限多——8 根已经把贴片围满了，管子之间的耦合也会恶化，这是作者没明说的扩展上限，自己心里有数即可。
+
+          注意 3-bit 只做了仿真没做实物（成本考虑，也合理——2-bit 实测背书了方法可信度）。
+      - type: para
+        text: |
+          Recent studies have validated the reliability of WGS for element testing [9], [12], [26], but CP reflectarray characterization in waveguides remains limited. Here, we adopt an orthomode transducer (OMT)—previously used for cross polarization and transmissive CP wave tests [9], [26]—to separate orthogonal linear polarizations.
+      - type: para
+        text: |
+          To validate the proposed RRA element, a 2 × 2 array was fabricated [see Fig. 6(a)], enclosed by ground planes and periodic metallic vias to suppress substrate modes. As shown in Fig. 6(b), the test setup includes the device under test (DUT), a waveguide transition, two coax-to-WR75 adapters, and the OMT. Operating from 10.6 GHz to 12.8 GHz, the OMT offers 30 dB isolation and features an 18 mm test port, while the prototype measures 24 mm × 24 mm. An ad-hoc waveguide transition with a length of 20 mm (0.76λ0) and a tapered circular-to-square cross section was designed to ensure impedance matching. Bias voltages were set to ±3.3 V for forward and reverse operation.
+      - type: figure
+        src: /figures/P18/fig6.png
+        caption: "Fig. 6. Photographs of (a) the fabricated 2-bit RRA element and (b) the measurement setup with the DUT."
+      - type: aside
+        text: |
+          WGS 思想值得专门领会：仿真用 Floquet 假设无限大阵，但加工一个"无限大阵"来测单元是不可能的。波导模拟器的取巧在于——波导壁的边界条件恰好等效于特定斜入射角度下的无限周期环境，所以**做一个 2×2 小样塞进波导口，就等效测了无限大阵里的单元**。
+
+          CP 的麻烦在于波导里传的是线极化，而你要测圆极化响应。解法是用 OMT（正交模变换器）把两个正交线极化分到两个端口分别测，再用下一段的公式 (4) 在数学上合成 CP。
+
+          为什么小样要围一圈金属过孔和地？抑制介质板里的表面波模式，让 2×2 小样的边界行为更像周期环境——细节，但这种细节决定实测和仿真对不对得上。
+      - type: para
+        text: |
+          Calibration of the waveguide transition and OMT was performed via the short-circuit line method. After calibration, the elements (DUT) were placed at the test port. Full characterization involved measuring the S-parameters ($S_{mea}$), including magnitudes $|S_{nm}^{mea}|$ and phases $∠S_{nm}^{mea}$ ($n, m = 1, 2$), with port definitions shown in Fig. 6(b). As both ports are linearly polarized, the orthogonal components were combined with a ±90° phase shift to derive the CP reflection coefficients, as defined in [26]:
+      - type: math
+        tex: "\\begin{aligned} S_{RR} &= \\tfrac{1}{2}\\big(S_{11} + j(S_{12} - S_{21}) + S_{22}\\big) \\\\ S_{LR} &= \\tfrac{1}{2}\\big(S_{11} - j(S_{12} + S_{21}) - S_{22}\\big) \\\\ S_{RL} &= \\tfrac{1}{2}\\big(S_{11} + j(S_{12} + S_{21}) - S_{22}\\big) \\\\ S_{LL} &= \\tfrac{1}{2}\\big(S_{11} - j(S_{12} - S_{21}) + S_{22}\\big) \\end{aligned} \\qquad (4)"
+      - type: para
+        text: |
+          where R represents the RHCP component and L signifies the LHCP component.
+      - type: aside
+        text: |
+          公式 (4) 不用背，看懂思想：两个线极化端口的 4 个 S 参数，按 ±90° 相位关系加权组合，就能拆出 LHCP/RHCP 的同极化（S_LL、S_RR）和交叉极化（S_LR、S_RL）分量。本质是一次基变换——线极化基 → 圆极化基。
+
+          校准用短路传输线法（short-circuit line method），把转接段和 OMT 的误差从测量面"推"到 DUT 端口。凡是看到"measured vs simulated 吻合良好"，背后都有这么一步不起眼的校准。
+      - type: terms
+        items:
+          - term: "waveguide simulator (WGS)"
+            def: "波导模拟器。利用波导壁边界等效无限周期阵环境，用几个单元的小样完成单元级实测，省掉加工整阵的成本。"
+          - term: "orthomode transducer (OMT)"
+            def: "正交模变换器。把波导里两个正交线极化模式分离到两个端口的器件，这里是 LP→CP 测量的桥梁。"
+          - term: "substrate mode"
+            def: "介质板表面波模式。能量沿介质板横向泄漏，小样边缘尤其严重，用过孔围栏抑制。"
+          - term: "short-circuit line calibration"
+            def: "短路传输线校准法。用已知短路/传输标准件把系统误差从参考面移除。"
+    ticket:
+      - q: "2-bit 变 3-bit，原理上改了什么？"
+        a: "什么都没改。延时线 4 根（45° 间隔）变 8 根（22.5° 间隔），PB 翻倍后相位步进从 90° 变 45°，即 3-bit。可扩展性正是本文卖点。"
+      - q: "WGS 为什么能用 2×2 小样代表无限大阵？"
+        a: "波导金属壁的镜像边界条件等效于周期阵列环境（对应特定斜入射角），小样在波导口里的处境和无限阵中间的单元一样。"
+      - q: "OMT 在这套测量里解决什么问题？"
+        a: "波导只能传线极化，而待测的是 CP 响应。OMT 把两个正交线极化分到两个端口测 S 参数，再按公式 (4) 数学合成 CP 反射系数。"
+
+  - id: c5
+    title: "成绩验收：单元、阵列与同行对比"
+    minutes: 12
+    blocks:
+      - type: para
+        text: |
+          Fig. 7 compares simulated and measured results under CP incidence. In Fig. 7(a), the minimum measured insertion losses for states S#1–S#4 are 0.62 dB, 0.42 dB, 0.43 dB, and 0.65 dB, closely matching simulated values of 0.38 dB, 0.33 dB, 0.36 dB, and 0.42 dB. Across 11.1 GHz to 12.5 GHz (11.9% bandwidth), measured losses stay below 1 dB, with simulations showing similar performance over 10.8 GHz to 12.25 GHz. Additionally, the measured cross-polarized components for all states remain below −15 dB (AR < 3 dB) over the frequency range of interest.
+      - type: figure
+        src: /figures/P18/fig7.png
+        caption: "Fig. 7. Measured and simulated performances of the 2-bit CP RRA element under normal LHCP incidence. (a) Reflection amplitudes. (b) Phases of SLL component and relative phase shift between S#1 and S#2–S#4."
+      - type: para
+        text: |
+          Fig. 7(b) shows strong agreement between measured and simulated reflection phases. The phase differences between adjacent states remain near 90° across the band: S#1–S#2, 83°–99°; S#1–S#3, 185°–210°; and S#1–S#4, 275°–295°. These phase differences align well with simulation, confirming the element's 2-bit phase reconfigurability under CP excitation.
+      - type: para
+        text: |
+          The measured magnitude responses exhibit a slight shift toward higher frequencies compared to simulations. This discrepancy is attributed to the integration of an ad-hoc waveguide transition, calibration errors, manufacturing tolerances, and assembly misalignment. Nonetheless, the WGS method accurately captures the CP RRA element's phase states, thereby validating the method's overall accuracy in reproducing the intended phase characteristics.
+      - type: aside
+        text: |
+          实测验收三个层次：
+
+          1. 插损 <1 dB（四态最差 0.65 dB）——兑现摘要承诺；
+          2. 相位间隔 83°–99°——2-bit 量化成立，这是全文最重要的一个实测数字；
+          3. 幅度曲线略向高频漂——作者的归因很诚实（转接段、校准、加工公差、装配），而且点破了一层窗户纸：**相位对上了比幅度对上了更重要**，因为反射阵里相位才是干活量。
+      - type: para
+        text: |
+          To further validate the feasibility of the proposed RRA element, 2-bit and 3-bit CP 16 × 16 RRAs (7.4λ0 × 7.4λ0) were designed and illuminated by an LHCP horn (−20° offset, F/D = 1.23), as shown in Fig. 8(a). The phase compensation diagrams for different beam directions are shown in Fig. 8(b).
+      - type: figure
+        src: /figures/P18/fig8.png
+        caption: "Fig. 8. (a) Simulated RRA illuminated by a LHCP horn. (b) Phase distribution for 2-bit and 3-bit quantization. (c) Broadside realized gains and ARs of RRAs and LHCP horn. (d) Radiation patterns of 2-bit RRA in xoz-plane at 11.6 GHz."
+      - type: aside
+        text: |
+          Fig. 8(b) 的相位分布图是理解"为什么多比特好"的最佳素材：同样要补偿一个斜波束，2-bit 的相位分布是一块块大色块（粗），3-bit 的条纹细密平滑（逼近连续）。量化误差就藏在这些色块的锯齿里——这是把引言"1-bit 原罪"可视化了，可以和 [[P13]]（口径效率分析）对照着看。
+      - type: para
+        text: |
+          Fig. 8(c) presents the simulated broadside gains and ARs of both RRAs, with key metrics summarized in Table II. The AR < 3dB bandwidth range from 10.1 GHz to 12.6 GHz (22%) and 10.5 GHz to 12.8 GHz (19.7%) for the 2-bit and 3-bit CP RRAs, respectively. Furthermore, the performance of the 2-bit RRA integrated with the complete bias network is evaluated, indicating minimal impact and validating the effectiveness of the bias network design. Therefore, the trade-off—greater design complexity in exchange for enhanced multibit phase tunability—is considered acceptable. Fig. 8(d) demonstrates 2-D beam scanning at 11.6 GHz, achieving ±60° steering with a scanning loss below 3.35 dB and a sidelobe level under −15.5 dB at broadside direction. Due to the inherent symmetry of the proposed element, RHCP performance can be obtained by replacing the LHCP horn without altering the RRA.
+      - type: aside
+        text: |
+          阵列级成绩单：±60° 扫描、扫描损耗 <3.35 dB、旁瓣 <−15.5 dB、轴比带宽 20% 上下。
+
+          一个诚实的设计自白值得划线："the trade-off—greater design complexity in exchange for enhanced multibit phase tunability—is considered acceptable"。多比特不是免费的，布线复杂度、控制路数、成本都涨了，作者明说这笔买卖"划算"——你自己做设计时也要会算这笔账。
+
+          阵列为仿真验证（没做 16×16 实物），但前面 WGS 单元实测 + 偏置网络影响评估这两步，把这个仿真的可信度撑住了。
+      - type: para
+        text: |
+          Table II compares the proposed p-i-n diode-based RRA with related works. Compared with the design in [21], which uses eight PIN diodes, the proposed element achieves stable 2-bit phase quantization with only four diodes, thereby reducing complexity and cost. The peak gain of the 2-bit CP RRA reaches 24.1 dBic at 11.3 GHz, with an aperture efficiency of 39.1%. Moreover, by increasing the number of p-i-n diodes per element to eight based on the same design concept, 3-bit phase quantization is realized. This novel design approach can be easily extended to arbitrary-bit element configurations, enabling flexible and scalable phase control.
+      - type: figure
+        src: /figures/P18/tab2.png
+        caption: "TABLE II. Comparison of proposed and other p-i-n-based RRA antennas."
+      - type: aside
+        text: |
+          Table II 是"江湖地位表"，看三个数：
+
+          1. 同样 2-bit CP，[21] 用 8 管，本文 4 管——管子减半，效率和带宽还更好；
+          2. 口径效率 39.1%（2-bit）/ 42.7%（3-bit）——对比表里 1-bit 方案的 13%–20%，这就是多比特的量化误差红利落袋了；
+          3. 24.1 dBic 增益配 7.4λ×7.4λ 口径，量级合理。
+
+          结尾"arbitrary-bit"的口号，结合 c4 的旁白批判性地看：原理上成立，物理上 8 根线基本到顶，3-bit 以上更可能走级联/混合方案。
+      - type: para
+        text: |
+          In this letter, we propose a novel method for designing arbitrary-bit phase RRA elements. As a proof of concept, a 2-bit element is first designed and validated using a 2 × 2 prototype. The measurements based on the WGS method closely match the simulation predictions. A stable 2-bit phase quantization is achieved over the 11.1 GHz to 12.5 GHz band, with insertion losses below 1 dB. Furthermore, by extending the same design principle and implementation mechanism, a 3-bit element is also developed, exhibiting clear 45° phase steps in simulation. To verify array-level performance, 16 × 16 RRAs are implemented for both 2-bit and 3-bit cases. The results demonstrate wide AR bandwidths, ±60° beam scanning, and high aperture efficiency. These results validate the scalability of the proposed approach to arbitrary-bit electrically reconfigurable CP elements. With robust performance and wide bandwidth, the design strategy shows strong potential for advanced space and satellite communication applications.
+      - type: terms
+        items:
+          - term: "insertion loss"
+            def: "插入损耗。反射时白白损失的能量，直接吃掉增益。本文 <1 dB 属于优秀。"
+          - term: "scanning loss"
+            def: "扫描损耗。波束扫离法向时增益的下降，±60° 处 <3.35 dB。"
+          - term: "F/D"
+            def: "焦径比。馈源焦距与阵面口径之比，决定照射锥削，1.23 属常见取值。"
+          - term: "dBic"
+            def: "相对理想圆极化各向同性辐射器的增益单位，CP 天线专用。"
+    ticket:
+      - q: "实测中作者认为哪个指标对上了最关键，幅度还是相位？为什么？"
+        a: "相位。反射阵靠相位分布成形波束，幅度差一点只是效率问题，相位错了波束就歪了。实测相位间隔 83°–99° 是全文最重要的验收数字。"
+      - q: "Table II 里本文相对 [21] 的硬优势是什么？"
+        a: "同为 2-bit CP，本文 4 个二极管实现对方 8 个管子的功能，且口径效率 39.1% > 35%，成本复杂度双降。"
+      - q: "『arbitrary-bit』这个说法要打个什么折扣？"
+        a: "原理可扩展（每加一档位数翻倍线数），但物理上贴片周长有限、管子耦合加剧，8 根线（3-bit）基本到顶，更高比特需换技术路线。"
+
+outro:
+  - "回到 Obsidian，打开 [[P18-Multibit Electrically Reconfigurable Circularly Polarized Reflectarray Elements Based on Pancharatnam-Berry Phase Principle]]，用你自己的话写下："
+  - "1. 『对称结构 + 不对称偏置 = 虚拟旋转』这个思想，和你库里哪篇论文的设计可以类比？（提示：P05 的旋转是真转）"
+  - "2. PB 相位的前提条件是什么？这篇是怎么在 Fig. 3(a) 里验收它的？"
+  - "3. WGS 测 CP 的整条链路（小样 → OMT → 公式(4) 合成）你能复述出来吗？"
+  - "写完三条，这篇才算真正读完。"

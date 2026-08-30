@@ -1,0 +1,368 @@
+id: P05
+title: "A Circularly Polarized 1 Bit Electronically Reconfigurable Reflectarray Based on Electromagnetic Element Rotation"
+venue: "IEEE TAP, vol. 69, no. 9, pp. 5585–5595, Sept. 2021"
+created: "2026-08-17"
+
+map: |
+  圆极化可重构反射阵以前有条死路：相位靠「转单元」给（Huang 1998），电控就得把旋转对称做出来，管子少不了。文献里唯一做成二维扫描的 CP 阵 [13]，一个单元四只管。管子多 → 偏置烦、损耗大、难做大阵。
+
+  这篇的骚操作一句话：别真转，也别为了假装转去保留旋转对称。圆贴片基模的场本来就有对称性——把关断的那只管挪到中心对称点，对基模几乎没感觉。所以两只管对调通断 = 虚转 90° = CP 相位翻 180°。只要**线对称**，二极管砍半。
+
+  结果：16×16 实物，峰值 21.8 dBic，口径效率 20%，镜面交叉极化约 −18 dB；2-D 扫描前向增益起伏 <2 dB。通讯作者 Fan Wu，东南大学毫米波实验室。你库里的 [[P18]] 就是在这个 trick 后面加一圈延时线，把 1-bit 虚旋转做成多比特。
+
+  这是 11 页 TAP，按处方读，不必逐字通关：
+
+  | 节 | 强度 | 这块干什么 |
+  |---|---|---|
+  | 摘要 + I | 🔬 精读 | 卡点：电控旋转必须旋转对称 → 管子多 |
+  | II 开场 + II-A | 🔬 精读 | 一只管先把单元做成 CP（Huang 条件） |
+  | II-B Fig.6–7 | 🔬 精读 | 全文题眼：对调通断 = 虚转 90° |
+  | Fig.8–10 + III | 🧭 选读 | 斜入射/焊偏 + LED 看状态 |
+  | IV-A | 🧭 选读 | 21.8 dBic / 20% / 作者认栽 T2 |
+  | IV-B + Table III | 🔬 精读 | 扫描兑现，对比四管方案 |
+  | V | ⏭️ 跳过 | 摘要复读 |
+
+chunks:
+  - id: c1
+    title: "引言：电控旋转太贵了"
+    minutes: 12
+    intensity: close
+    blocks:
+      - type: para
+        text: |
+          Abstract—A circularly polarized (CP) reflectarray with 2-D electronically steerable beam is reported. The reconfigurable CP reflectarray element is realized using a circular-patch-based structure with p-i-n diodes incorporated. A new electronical phase manipulation method is proposed based on the element rotation technique and by additionally exploiting symmetries in the field distribution of the element's fundamental resonant mode. Element rotation can be equivalently achieved by altering the biasing voltage and changing the electromagnetic behavior of the reflective phasing cell. The proposed design approach brings about simplification in element configuration, leading to a reduction in the number of required diodes by a factor of one half. Practical concerns of the element and biasing complexity as well as the insertion loss are, therefore, well-handled. A fully functional 16 × 16 reconfigurable CP reflectarray is designed, fabricated, and tested to validate the concept. Good beam focusing and 2-D dynamic beam steering capabilities are confirmed through experiments, along with decent polarization purity and comparatively high aperture efficiency. The proposed simple and robust design could be attractive for implementing lightweight, low-cost, and large-scale 2-D reconfigurable CP reflectarrays.
+      - type: aside
+        text: |
+          摘要里要带走的不是「又一篇 1-bit 阵」，是那句 **by a factor of one half**——二极管砍半。后面 11 页都在给这句话当证据。
+
+          「electronical」是作者用词，不是拼写检查没过；全文都这么写。通讯作者 Fan Wu，和你刚读的 [[P03]] 同一实验室。
+      - type: para
+        text: |
+          HIGH-GAIN antennas with their focused beam being able to be dynamically redirected to other intended directions, that is, beam steering capability, can be of practical use to improve the performance of wireless systems such as the next-generation wireless communications, remote sensing, and satellite communications. Conventional aperture antennas including parabolic reflector antennas and phased arrays provide a classical and easy comprehensive way to achieve high antenna gain. However, the drawback associated with the reflector antenna is that beam steering with good performance should be achieved through mechanical tuning. As for the phased array, digitally controlled phase shifters are incorporated to adjust the radiation phase of each array element, which tremendously increases the complexity, fabrication cost, and physical volume of the antenna.
+      - type: aside
+        text: |
+          TAP 开场三段论你已经背熟了：抛物面要机械转、相控阵要移相器——反射阵来当折中。文献 [2] 就是库里的 [[P19]] Hum 综述。
+      - type: para
+        text: |
+          Reflectarray has been considered as a promising alternative for high-gain antenna since it combines feasible features from both the reflector and phased array [1]. It shows the flexibility of scanning the beam by designing different phase compensation scheme while preserving the simple spatial feeding configuration and eliminating the need for complex and lossy feed network. Reconfigurable reflectarrays with dynamic beam control have received widespread research attention during the past decade [2]. The incorporation of discrete elements such as varactor diodes, p-i-n diode switches, and MEMS switches within the unit cell allows the element to change their resonance, scattering behavior, and the reflection phase. Adaptive beam steering can therefore be achieved in a fast, reliable, and comparatively high-efficiency manner with low cost and relatively simple hardware. For instance, discrete phase manipulations with a resolution of one or several bits are implemented with a single switch or the collaborative operation of several p-i-n/MEMS switches [3]–[5]. Continuous reflection phase change can be obtained using varactor-diode-inserted elements and a linearly adjustable biasing voltage [6]. In addition, tunable materials including liquid crystal, ferroelectric film, and graphene also provide promising solutions for launching reconfigurable beams, especially at higher operating frequencies [2].
+      - type: para
+        text: |
+          Single-bit reconfigurable reflectarrays using p-i-n diode switches are of practical interest due to their simplicity and low cost, though the challenges are also clear, including the decreased aperture efficiency, degraded cross-polarization discrimination (XPD), and possibly higher sidelobe level (SLL). The classical yet efficient design approach, in which the radiating edge of a rectangular patch is shorted to the ground through p-i-n diode so as to switch between two different operation states, has been widely studied and applied to realize various designs achieving linearly polarized, dual-polarized, and/or dual-band operations [7]–[10]. However, few investigations that target at 1 bit circularly polarized (CP) beam steering have been reported for reflectarray design [2], [11], [12]. To the best of the authors' knowledge, only one reported design of fully functional electronically beam steering CP reflectarray can be found in the literature within the antenna and propagation community [13].
+      - type: aside
+        text: |
+          线极化 1-bit：贴片辐射边经 PIN 对地短路，两态切换——这招你库里 [[P04]]、[[P07]] 都见过。圆极化这边作者说社区里做成能二维电扫的，当时只有一篇 [13] Zhang 等（Ku 卫星，四只管）。这句话是全文的靶子：我要做同样的事，但更简单。
+      - type: para
+        text: |
+          To date, most reported mechanical [14] and electronical [13], [15], [16] tuning techniques for achieving reconfigurable CP reflectarray element are rather straightforward extensions based on the element rotation method proposed by Huang and Pogorzelski [17]. They all require the element to be rotated, either physically or geometrically, to adjust the phase. It is not difficult to figure out that in the reported electronical approaches, rotational symmetry in element configuration should be reserved to realize the geometrical rotation in an electronical manner. This places a strong constraint on the element configuration and the minimum number of diodes needed. As a result, the design complexity, fabrication cost and the insertion loss will become the primary concerns. Evidently, 1 bit CP reconfigurable element with new design philosophy that brings about simplification in element configuration and enhancement of efficiency would be desirable, for facilitating the development of large CP reconfigurable reflectarray.
+      - type: aside
+        text: |
+          题眼段。Huang 1998 的 {{单元旋转法::element rotation method。圆极化反射阵给相位的古典办法：单元转 θ，CP 反射相位变 2θ。[[P18]] 的 PB 相位就是它的几何相位说法}}是祖师——机械转慢，电控转就得把「转」做成开关组合，于是单元必须旋转对称，管子下限被锁死。
+
+          作者的宣战：我不要旋转对称，我只要线对称。下一节会看到怎么靠基模场的对称性把「转」偷换成「换哪只管通」。
+      - type: para
+        text: |
+          In this work, a single-bit CP electronically reconfigurable reflectarray based on electromagnetic element rotation is proposed. To address the challenge of lowering element complexity and reducing diodes number, symmetries in the field distribution of the fundamental mode of a circular-patch-based structure are exploited, in addition to the element rotation technique, for enabling a new electronical approach of manipulating the phase. Only line symmetry in element configuration is required for the proposed 1 bit CP element, which essentially helps simplify the element and halve the number of diodes. 2-D beam steering capability with high circular polarization purity and improved aperture efficiency are achieved. This article is organized as follows. Section II presents the proposed 1 bit CP reconfigurable element and the operating mechanism. Section III introduces the considerations in design and implementation of the fully functional reconfigurable reflectarray. The measured results of the fabricated prototype are provided and discussed in Section IV. Finally, the conclusion is drawn in Section V.
+      - type: terms
+        items:
+          - term: "element rotation method"
+            def: "单元旋转法。Huang 1998：CP 反射相位 = 2×旋转角。机械转或电控几何转都从这儿来。"
+          - term: "rotational symmetry"
+            def: "旋转对称。电控『假装转』时，单元转一圈还得长得一样，管子数量被对称阶数锁死。"
+          - term: "line symmetry"
+            def: "线对称。这篇只要关于一条轴镜像对称，两只管就够 1-bit。"
+          - term: "XPD"
+            def: "交叉极化鉴别度。共极化比交叉极化高多少 dB，CP 纯度的成绩单。本文单元 >15 dB。"
+    ticket:
+      - q: "作者说前人电控 CP 旋转『必须保留旋转对称』，这锁死了什么？"
+        a: "锁死了二极管下限。要几何地转 90°，单元四个象限都得能接到对称的开关上，典型就是 [13] 的四只管。管子多 → 偏置网络、损耗、成本一起涨，大阵做不起。"
+      - q: "『电磁旋转』相对机械旋转和几何旋转，偷换的是哪一步？"
+        a: "不转贴片，也不靠四象限开关拼出『转过的几何』。用基模场自己的对称性：对调两只管的通断，让电磁行为等价于转了 90°。"
+
+  - id: c2
+    title: "先做成 CP：一只管就够"
+    minutes: 14
+    intensity: close
+    blocks:
+      - type: para
+        text: |
+          A new reconfigurable reflectarray element that is capable of electronically altering the phase of the backscattered CP wave in 1 bit manner is developed. The configuration of the proposed element is depicted in Fig. 1. The element is designed based on a circular microstrip patch antenna that operates at its fundamental resonant mode. As shown in Fig. 1(b), two shorting pins located symmetrically about the y-axis are placed on the radial lines along the phi = 45° and 135° directions with a specific distance to the patch center. Two p-i-n diode switches (MA4AGP907 from MACOM) oriented parallel to the radial directions are inserted, with their one end soldering onto the patch and the other to the top pad of the pin. The diodes are used to enable or block possible currents that flow into the ground from the patch surface. The connectivity of the pins can, therefore, be controlled by switching on and off the diodes.
+      - type: figure
+        src: /figures/P05/fig1.png
+        caption: "Fig. 1. Configuration of the proposed 1 bit reconfigurable CP reflectarray element. (a) Exploded view. (b) Layout of the top layer. (c) Layout of the biasing circuit at the bottom layer."
+      - type: aside
+        text: |
+          先看硬件，别急着听原理。圆贴片、两根短路针在 45°/135°，每根针串一只 PIN；地平面背面走直流，中心 PTH 从贴片正中穿下去——那是两个正交基模的公共节点，射频看起来像开路，直流两边都能喂。
+
+          底层那片扇形开路枝节 + 四分之一波长线是射频扼流。你自己做可重构单元时，这套「射频层 / 地 / 直流层」三明治几乎是标配；[[P18]] 后来把扇形 stub 换成了集总电感，为的是省面积。
+      - type: para
+        text: |
+          The biasing circuit supplying direct current (dc) voltage is implemented at the opposite side of the ground plane and connected to the patch through a metallized plating through hole (PTH) located at the center of the patch (i.e., the common nodal point of two orthogonally polarized fundamental modes). A band-stop filter composed of an open-circuit stub and a quarter-wavelength microstrip line is adopted to further suppress the radio frequency (RF) signal on the dc line. Dual-layer substrate configuration is used, to accommodate the reflectarray element and the biasing circuit. The patch and the ground plane are realized at the top and bottom sides of the upper substrate while the dc line is designed at the copper layer beneath the lower substrate. The two substrates (RO4003C, dielectric constant of 3.38, thickness of 1.52 mm for the upper one and 0.81 mm for the lower one, respectively) are bonded together using a 0.202 mm thick adhesive film (RO4450F, relatively permittivity of 3.52). The patch, the ground plane, and the dc line are all considered as copper plate with actual thickness. The design procedure of achieving 1 bit CP reconfigurable reflectarray element can be broken down into two parts: the implementation of a CP reflectarray element and the realization of 1 bit electronical phase control. The method and principle of achieving CP operation and electronical phase manipulation will be, respectively, explained.
+      - type: figure
+        src: /figures/P05/fig2.png
+        caption: "Fig. 2. Equivalent circuit of the p-i-n diode when it is (a) switched on and (b) switched off."
+      - type: aside
+        text: |
+          二极管不是理想开关。ON：4.2 Ω + 50 pH；OFF：42 fF ∥ 300 kΩ。后文所有「仿真对不上」的嫌疑名单里，这模型排第二，第一是短路针位置 T2。
+      - type: para
+        text: |
+          Consider the case when only one of the two diodes is switched on for electrically connecting the shorting pin to the patch and let the element be illuminated by a left-hand CP incident wave propagating in the −z-direction. According to Huang's analysis in [17], a CP reflectarray element can be achieved when the reflection phase of one LP component differs by 180° from that of the orthogonal LP component. On the other hand, it has been suggested in the classic patch antenna design [18], [19] that shorting pin if placed at the nonnull point of the electric field can affect the resonant frequency of the corresponding mode. Reflection phase difference is then expected to be between the 45°-polarized and 135°-polarized LP components since the two diode-controlled shorting pins, in this case, will result in different resonant frequencies for the two orthogonally polarized fundamental modes. Moreover, the difference in reflection phase can be tuned by changing the distance between the pin and the center of the patch. Consequently, a CP reflectarray element can be properly designed when only one of the diodes is turned on and appropriate geometrical specifications are selected to secure the required 180° reflection phase difference between two orthogonal LP components.
+      - type: aside
+        text: |
+          半边 trick 就这一段。Huang 条件：两个正交线极化反射相位差 180°，反射波才是圆极化。作者的实现：只接通一只管，一根针把某一个线极化的谐振拉开，相位差就出现了；针离中心的距离 T2 是旋钮。
+
+          注意时序：先保证「一只管通着的时候它是个 CP 单元」，下一节才谈「换哪只管通来给 1-bit 相位」。两步不要并成一步。
+      - type: para
+        text: |
+          The CP performance of the element under oblique incidence (in line with the off-set angle of the feed horn described in Section III) is simulated in full-wave electromagnetic software Ansys HFSS using floquet mode excitation and periodic boundary condition. Two equivalent circuits, as sketched in Fig. 2, are adopted to, respectively, model the diode in “ON” and “OFF” states. The simulated results displayed in Fig. 3 shows how the change in pin location affects element CP performance. Optimized performance with geometrical specifications listed in Table I are denoted by the red (dashed and solid) lines in Fig. 3. The optimized design exhibits an XPD of more than 15 dB within the frequency range from 9.1 to 9.8 GHz. The insertion loss is smaller than 1 dB over the operating bandwidth with the lowest value of 0.5 dB found at 9.25 GHz. This demonstrates that the design can be used as a CP reflectarray element with a low insertion loss.
+      - type: figure
+        src: /figures/P05/fig3.png
+        caption: "Fig. 3. Reflection coefficients of the proposed element with only one diode turned on under CP wave incidence with oblique angle of theta = 30° and phi = −90° (optimized element performances are shown in red lines)."
+      - type: figure
+        src: /figures/P05/tab1.png
+        caption: "TABLE I SPECIFICATIONS OF THE OPTIMIZED ELEMENT (UNIT: mm)"
+      - type: para
+        text: |
+          To better support our explanations, field distributions of the resonant modes and the quantitative analyses regarding the magnitude and phase of the reflected wave are presented in Figs. 4 and 5. The results are obtained from a unit cell illuminated by LP incident wave (i.e., the 45°-polarized and 135°-polarized waves, respectively), since the performance of a CP reflectarray element is essentially controlled by the different resonance, and hence scattering of the element upon two orthogonal LP plane-wave excitations. As can be seen from Fig. 4, the fundamental mode of the circular patch is excited when the element is illuminated by either a 45°-polarized or a 135°-polarized incident wave. Different field intensities can be clearly identified for the two excited fundamental modes, as expected (since different states are preserved for the two diodes: only the diode along the 135°-direction is switched on). The magnitudes and phases of the reflection coefficients for the two orthogonal LP components are plotted in Fig. 5 to quantitatively show the different backscattered fields and clarify the sensitivity study illustrated in Fig. 3.
+      - type: figure
+        src: /figures/P05/fig4.png
+        caption: "Fig. 4. Electric field distributions beneath the patch at the frequency of 9.4 GHz when the element is illuminated by (a) 45°-polarized incident wave and (b) 135°-polarized incident wave."
+      - type: figure
+        src: /figures/P05/fig5.png
+        caption: "Fig. 5. Reflection coefficients for the two orthogonal LP components when T2 changes. (a) Magnitudes. (b) Phases."
+      - type: para
+        text: |
+          Two observations are found from Fig. 5 which confirm our previous explanations: 1) the activation of only one of the two diodes results in considerably different resonance and backscattered fields for the two orthogonal LP components and 2) the differences in the resonances and backscattered fields can be adjusted by modifying the distance between the pin and the patch center (i.e., T2). In the theoretical analysis of CP reflectarray element by Huang and Pogorzelski [17], losses are neglected and the magnitudes of the two backscattered LP components are assumed to be the same. With p-i-n diodes inserted in the proposed reconfigurable design, the potential imbalance in magnitudes of the two components should be considered, as indicated in Fig. 5(a). Nevertheless, desired CP backscattered wave with the axial ratio (AR) smaller than 3 dB (or XPD higher than 15 dB) could still be generated when proper magnitude ratio and phase difference are achieved between the two LP components. As a side note, the lower magnitudes of the reflection coefficients in Fig. 5(a), when compared with those observed from passive reflectarray elements, are caused by the ohmic losses contributed by the p-i-n diodes. Widest AR bandwidth is obtained when T2 = 0.4 ∗ R2 according to the results presented in Fig. 3. With reference to Fig. 5, it is noted that the deviation of T2 mainly causes change in the phase difference within the operating frequency range from 9.1 to 9.8 GHz while the magnitude ratio remains comparatively stable. The variation in phase difference would go up to approximately 30°. This explains the increases IN cross-polarization levels in Fig. 3 when T2 ≠ 0.4 ∗ R2.
+      - type: aside
+        text: |
+          作者自己点了 Huang 理论的漏洞：理想分析假设两个线极化幅度一样、无损耗；插了 PIN 之后幅度会失衡。好消息是 AR < 3 dB 并不要求幅度完美相等，相位差对了、幅度别差太远就行。
+
+          笔误警报：正文写「T2 = 0.4 ∗ R2」，但 Fig. 3 图例和 Table I 对得上的是 **T2 = 0.4 ∗ R1**（1.72 / 4.3 = 0.4）。R2 是底层扇形 stub 半径。看图、看表，别看这句。后文实测带宽变窄，作者会把锅甩给 T2 太敏——这句话倒是真的。
+      - type: terms
+        items:
+          - term: "Huang's 180° condition"
+            def: "两个正交线极化反射相位差 180°，合成才是圆极化。PB / 单元旋转法的共同前提。"
+          - term: "T2"
+            def: "短路针到贴片中心的距离。拉开两正交模谐振的旋钮，也是全文最敏感的加工尺寸。"
+          - term: "PTH"
+            def: "金属化过孔。这里打在贴片正中，直流进出、射频看两个正交模的公共节点。"
+    ticket:
+      - q: "为什么『只接通一只管』就能得到 CP，而不是两只管一起玩？"
+        a: "CP 要的是两个正交线极化相位差 180°。一只管把一根针接到地，只扰动一个线极化的谐振，另一个几乎不动，相位差就出来了。两只管同时通或同时断，两个模被对称地对待，差不出来。"
+      - q: "T2 调的是幅度比还是相位差？调过头会怎样？"
+        a: "主要调相位差（文中说可偏到约 30°），幅度比相对稳。偏了 Fig. 3 交叉极化就抬起来，AR 带宽变窄。这就是后面实测低频 AR 翻车的伏笔。"
+
+  - id: c3
+    title: "虚旋转：对调两只管"
+    minutes: 12
+    intensity: close
+    blocks:
+      - type: para
+        text: |
+          As stated in Section I, rotational symmetry in element configuration needs to be reserved in reported electronically reconfigurable CP design [13]. This results in a relatively complex element with quite a few diodes needed. Here, by additionally exploiting symmetry in field distribution of the fundamental resonant mode, the CP phase can be adjusted in 1 bit manner without having the element being rigorously rotated. Only line symmetry in element configuration would be required, which considerably reduces the element complexity (e.g., halve the number of diodes). In the proposed method, element rotation of 90° is equivalently obtained by exchanging the ON/OFF states of the two diodes, that is, turning on the deactivated diode and, at the same time, switching off the forward biased diode. The operating principle can be explained with the help of the element evolution diagram illustrated in Fig. 6.
+      - type: figure
+        src: /figures/P05/fig6.png
+        caption: "Fig. 6. Element configurations and evolutions. (a) Proposed CP element. (b) Proposed element being rotated clockwise by 90°. (c) Proposed element with no rotation but different diodes state."
+      - type: para
+        text: |
+          Fig. 6(a) depicts the proposed CP element where only one diode is biased to be in the “ON” state. It is not difficult to understand that a reflection phase change of 180° will be readily achieved if one physically rotates the element with respect to its center by 90°. The rotated element configuration is given in Fig. 6(b). Since the patch operates in the fundamental mode, moving the “OFF”-state diode and the associated shorting pin from the rotated location depicted in Fig. 6(b) to the symmetric position with respect to the patch center, as shown in Fig. 6(c), will not alter the element resonance under 135°-polarized LP wave illumination. The resonance excited by the 45°-polarized LP incident wave is nearly unchanged as well because the “OFF”-state diode and the shorting pin lie always at the nodal line of the corresponding dominant mode. Therefore, the electromagnetic behavior of the element in Fig. 6(c) upon CP wave incidence is almost identical to that of the rotated element shown in Fig. 6(b). Stated in another way, by switching the ON/OFF states of the two diodes, a virtual element rotation of 90° and hence 180° difference in the phase of the reflected copolarization component can be obtained.
+      - type: aside
+        text: |
+          全文题眼，三步走，对着 Fig. 6 看：
+
+          1. (a)→(b)：真转 90°，Huang 说 CP 相位变 180°。这步没新东西。
+          2. (b)→(c)：把关断的那只管连同短路针，挪到关于中心的对称点。基模下，关断管落在另一个极化的**节线**上，几乎不参与谐振——所以 (c) 的电磁行为和真转过的 (b) 几乎一样。
+          3. 观察：(c) 相对 (a)，贴片没转，只是两只管通断对调了。
+
+          所以「对调通断 = 虚转 90° = 180° 相位」。这就是题目里的 electromagnetic element rotation。[[P18]] 后来把「虚转」从两个离散角推广成一圈延时线，想转多少挡就摆多少根。
+      - type: para
+        text: |
+          To support the claim of simpler element configuration and intuitively compare the proposed method with the reported one, the design of a reconfigurable CP reflectarray element based on the electronical tuning methodology described in [13] is illustrated in Fig. 7, also using the circular-patch-type microstrip element. It can be inferred that the element configuration would be more complex if the design is based solely on the element rotation technique.
+      - type: figure
+        src: /figures/P05/fig7.png
+        caption: "Fig. 7. Conceptual drawing of a 1 bit electronically reconfigurable CP reflectarray element adopting the conventional design methodology. (a) State I. (b) State II."
+      - type: aside
+        text: |
+          Fig. 7 是「如果我老老实实按旋转对称做」：四个象限四只管，两两对角通，才能拼出转过 90° 的几何。作者用同一只圆贴片画给你看——复杂度一目了然。这不是嘲讽，是给审稿人看的对照实验。
+      - type: para
+        text: |
+          Specifically, with the two diodes designed to have opposite orientations [see Fig. 1(b)] and the ground plane being the reference point for dc voltages, a biasing line that provides either a positive or a negative voltage would be sufficient to control the element state. For easy reference, the biasing voltage, diode state, and reflection phase of the copolarization component for different operation states of the proposed 1 bit CP reconfigurable element are summarized in Table II.
+      - type: figure
+        src: /figures/P05/tab2.png
+        caption: "TABLE II OPERATION STATES OF THE PROPOSED 1 BIT CP RECONFIGURABLE ELEMENT"
+      - type: aside
+        text: |
+          工程红利：两只管反向焊接，地作参考，**一根线正负电压**就切换 0°/180°。256 单元不是 512 路偏置。下一节 LED 红绿指示，靠的也是这根线的极性。
+      - type: terms
+        items:
+          - term: "virtual element rotation"
+            def: "虚旋转。不转贴片，用开关改变电流路径，让电磁行为等价于转过某个角度。"
+          - term: "nodal line"
+            def: "节线。某个模电场为零的那条线。关断管落在节线上，对这个模几乎透明。"
+    ticket:
+      - q: "Fig. 6(b)→(c) 为什么敢把关断管挪到中心对称点？"
+        a: "基模下，关断管落在另一个极化的节线上，不改变那个模的谐振；接通管那边的谐振也不怎么变。所以 (c) 和真转过的 (b) 对 CP 入射几乎一样。"
+      - q: "为什么两只管要反向装？一根偏置线怎么同时管两只？"
+        a: "反向并联到地。+Vf 只正偏 Diode 1，−Vf 只正偏 Diode 2。极性即状态，256 单元只要 256 根线，不是 512。"
+
+  - id: c4
+    title: "斜入射、焊偏、把阵做出来"
+    minutes: 10
+    intensity: skim
+    blocks:
+      - type: aside
+        text: |
+          选读。II-B 后半是稳健性仿真，III 是把 256 单元焊上控制板。思想已经在上一块讲完，这里只捡题眼和值得抄的工程。
+      - type: para
+        text: |
+          As noted, a stable reflection phase difference of 180° over the operating bandwidth is observed between the two element states while the desired high cross-polarization suppression is well-preserved.
+      - type: figure
+        src: /figures/P05/fig8.png
+        caption: "Fig. 8. Phases of the reflection coefficients of the copolarization component and magnitudes of the reflection coefficients of the cross-polarization component for the two different element states."
+      - type: aside
+        text: |
+          Fig. 8 验收虚旋转：两态共极化相位差钉在 180°，交叉极化两边都能压到 −15 dB 附近。State I 的交叉极化带宽略窄一点，作者说「只是稍微影响 AR」——翻译：1-bit 两个态并不完全对称，这是线对称方案相对旋转对称方案的税。
+      - type: para
+        text: |
+          As shown, the cross-polarization level and the operating bandwidth are improved when incident angle decreases from 30° to 5°. The performances are slightly degraded when the incident angle increases to 55°. However, large incident angle only holds true for elements near the edge, and a reported study has already shown that deviation of S-parameters in the edge elements will not have a significant impact on the performance of such space-fed antennas [20].
+      - type: figure
+        src: /figures/P05/fig9.png
+        caption: "Fig. 9. Magnitudes of the reflection coefficients of the cross-polarization component under different angles of incidence for the two element states."
+      - type: figure
+        src: /figures/P05/fig10.png
+        caption: "Fig. 10. Magnitudes of the reflection coefficients of the cross-polarization component when the two diodes are misaligned (rotated, respectively, with respect to the center of shorting pin by an angle of α1 and α2)."
+      - type: aside
+        text: |
+          Fig. 9：馈源偏 30°，单元按 5°/30°/55° 扫过。边沿 55° 差一点，但空间馈电阵边沿单元本来就不是主角。Fig. 10：管子绕短路针转 ±20° 模拟焊偏，交叉极化几乎不动。作者想说的是「这个设计耐得住普通加工」——对比 T2 对中心距那么敏，角度误差反而不要命。
+      - type: para
+        text: |
+          To facilitate debugging and help visually monitoring the operation state of the reconfigurable reflectarray, two light-emitting diodes (LEDs) are added into the dc line of each element, as illustrated in Fig. 11(c). The LEDs are also oriented in opposite directions and connected in parallel. The p-i-n diodes and LEDs are then connected in a series configuration. DC voltage is supplied at one end of the LEDs to power up the diodes and alter the element operation state. The two operation states of the element can be easily distinguished by different LED colors (red or green).
+      - type: figure
+        src: /figures/P05/fig11.png
+        caption: "Fig. 11. Photographs of the fabricated reflectarray prototype. (a) Perspective view of the whole reconfigurable reflectarray system. (b) Top view of the reflectarray board. (c) Bottom view of the reflectarray board."
+      - type: figure
+        src: /figures/P05/fig12.png
+        caption: "Fig. 12. DC electrical connection diagram of the diodes in one element."
+      - type: figure
+        src: /figures/P05/fig13.png
+        caption: "Fig. 13. (a) Phase compensation scheme and (b) simulated radiation pattern for a steering beam pointing to theta = 30° and phi = 60° direction (the “0° element” and “180° elements” are represented by white and black blocks in the phase compensation scheme, respectively)."
+      - type: aside
+        text: |
+          阵面数字过一眼就行：16×16、240 mm 见方、LHCP 喇叭偏馈 30°、f/D = 0.99、边沿照射 −10 dB、控制板藏在阵面底下以免挡散射。
+
+          值得抄回家的是 **每单元两色 LED**：和 PIN 反向并联再串联，红/绿直接读 0°/180°。256 路偏置调试时，这比对着网表猜状态要人道得多。仿真用 FE-BI，而且故意不建 LED 和控制板——扇形 stub 把射频在 PTH 处掐死了，并在直流上的东西 RF 看不见。
+
+          1-bit 量化还有个参考相位要选，作者说按加权平均相位误差优化，方法在他们前作 [21][22]。你自己做 1-bit 阵也绕不开这一步。
+      - type: terms
+        items:
+          - term: "f/D"
+            def: "焦径比。馈源到口径距离 / 口径边长。这里 0.99，边沿约 −10 dB。"
+          - term: "reference phase"
+            def: "1-bit 量化时加在补偿相位上的公共偏置。选得好能减小孔径上的平均量化误差，抬口径效率。"
+    ticket:
+      - q: "边沿单元入射角到 55° 交叉极化变差，作者为什么不慌？"
+        a: "空间馈电阵边沿贡献本来就小；文献 [20] 也说过边沿 S 参数偏离带不走整阵方向图。后文整阵实测会替他验收。"
+      - q: "LED 和 PIN 怎么接，才红绿分别对应两个相位态？"
+        a: "两只 LED 反向并联（和两只 PIN 一样），再跟 PIN 串联。偏置极性翻转时，一路 PIN+LED 导通，另一路截止，颜色即状态。"
+
+  - id: c5
+    title: "镜面实测：数字和认栽"
+    minutes: 8
+    intensity: skim
+    blocks:
+      - type: aside
+        text: |
+          选读。镜面反射（specular，θ = 30° 那一档）是口径效率、AR、方向图的「最好成绩单」——能量用得最满。先记三个数，再看作者怎么解释仿真对不上。
+      - type: para
+        text: |
+          A peak gain of 21.8 dBic and a peak aperture efficiency of 20% are reported. A 3 dB gain bandwidth of 9.4% (9.1–10 GHz) is successfully achieved. In comparison to the simulated 3 dB bandwidth of 7.5% (9.07–9.8 GHz), a measured AR bandwidth of 5.6%, covering frequencies from 9.26 to 9.8 GHz, is observed.
+      - type: figure
+        src: /figures/P05/fig14.png
+        caption: "Fig. 14. Measured and simulated radiation patterns of the specularly reflected beam in the phi = 90° plane at (a) 9.3 and (b) 9.5 GHz."
+      - type: figure
+        src: /figures/P05/fig15.png
+        caption: "Fig. 15. Measured and simulated AR versus frequency."
+      - type: figure
+        src: /figures/P05/fig16.png
+        caption: "Fig. 16. Measured and simulated antenna gain and aperture efficiency as a function of frequency."
+      - type: para
+        text: |
+          The narrower AR and gain bandwidth are suspected to be caused by the degradation in element bandwidth. Fabrication tolerance (especially for the location of the shorting pins, which has been proven by simulation results in Fig. 3 to be a sensitive parameter controlling element bandwidth) and possible deviation of the p-i-n diode performance under particular temperature, moisture, and biasing conditions from the equivalent circuit model adopted in simulation could be the primary reasons for the element bandwidth degradation.
+      - type: aside
+        text: |
+          方向图主瓣位置对上了；SLL 仿真 −15 dB、实测约 −12.5 dB；主瓣交叉极化约 −18 dB。口径效率 20%——对 1-bit PIN 阵这是「比较高」而不是「很高」，Table III 会拿它跟四管 CP 的 15%、单管 LP 的 18–27% 比。
+
+          作者认栽的两口锅你要记住，这是看论文的通用技巧：T2（短路针位置）太敏；二极管等效电路跟真实温湿度/偏置对不上。低频 AR 翻车，Fig. 15 蓝线 9.1 GHz 附近直接冲出图框。
+      - type: terms
+        items:
+          - term: "specular reflection configuration"
+            def: "镜面反射位形。波束指到几何反射方向，口径利用最充分，用来报峰值增益和效率。"
+          - term: "aperture efficiency"
+            def: "口径效率。实测峰值 20%。1-bit 量化误差 + PIN 欧姆损耗是主要税。"
+    ticket:
+      - q: "实测 AR 带宽从仿真 7.5% 掉到 5.6%，作者归咎哪两件事？"
+        a: "短路针位置 T2 加工误差（Fig. 3 已证明它控带宽），以及 PIN 真实表现偏离仿真用的等效电路（温湿度、偏置）。"
+      - q: "20% 口径效率该怎么读？算高还是算 1-bit 税？"
+        a: "相对无二极管的普通反射阵是低的；相对当时唯一的二维电扫 CP 阵（15%）和多数 1-bit PIN 阵，作者认为算高。下一张 Table III 把账摊开。"
+
+  - id: c6
+    title: "扫描兑现，管子确实少了一半"
+    minutes: 12
+    intensity: close
+    blocks:
+      - type: para
+        text: |
+          The 2-D beam steering functionality is demonstrated by designing and realizing a number of pencil beams with different steering angles in the two main planes. In addition to the radiation patterns revealing the steering capability in the two planes, the antenna gain and AR of the corresponding steering beam are reported in Fig. 17 as well. For beam steering in the phi = 90° plane, high polarization purity is achieved. The measured ARs are well below 2 dB, as displayed in Fig. 17(c). Since this is the plane where the offset feeding horn is situated, feed blockage effect is observed, particularly in the backward beams. The measured results of the forward beams steering from theta = 0° to 45° match well with predictions. A gain variation of smaller than 2 dB is obtained among the forward beams point at different directions. As for the backward beams, a larger gain reduction is found. The gain of the beam steering to theta = −30° is dropped by nearly 5 dB.
+      - type: figure
+        src: /figures/P05/fig17.png
+        caption: "Fig. 17. Measurement setup for beam steering in (a) phi = 90° plane and (b) phi = 0°. Measured and simulated gain and AR at the corresponding main beam direction. (c) Beam steering with different theta angle in phi = 90° plane. (d) Beam steering with different theta angle in phi = 0° plane. The measured radiation patterns of the copolarization components. (e) Beam steering with different theta angle in phi = 90° plane. (f) Beam steering with different theta angle in phi = 0° plane. All results are obtained at the center frequency of 9.5 GHz."
+      - type: para
+        text: |
+          Beam steering in the phi = 0° plane is also considered. The measured antenna gains depicted in Fig. 17(d) are in good agreement with the simulated results, demonstrating a scan loss of no more than 3 dB for beams scanning from −45° to 45°. A relatively small AR is found for beams of steering angles less than 60°. The AR values for the two beams steering to ±60° become larger, mainly due to the drop of copolarization levels. All the measured LHCP radiation patterns in the two orthogonal main planes obtained at the center frequency of 9.5 GHz are plotted in Fig. 17(e) and (f), respectively. The 2-D beam steering capability is well-confirmed and reasonably measured.
+      - type: aside
+        text: |
+          扫描平面分清楚：φ = 90° 是偏馈喇叭所在面，前向 0°–45° 增益起伏 <2 dB，AR < 2 dB；后向 −30° 掉约 5 dB——馈源挡着。φ = 0° 没挡，±45° 扫描损耗 ≤3 dB；±60° 轴比起飞，因为共极化自己掉下去了。
+
+          1-bit 阵扫大角度，方向图能成形已经不容易；别拿连续移相的相控阵标准来骂它。
+      - type: para
+        text: |
+          To demonstrate the feasibility of the proposed design, the antenna characteristics are compared with state-of-the-art 1 bit beam-steering reflectarray designs in Table III. Compared with, to the best of the authors' knowledge, the only reported fully functional 2-D electronically beam steering CP reflectarray, the proposed design possesses a much simpler element configuration and requires less diodes to be incorporated. The dual-layer substrate and two-diodes-per-element configuration serve to reduce the complexity to be at about the same level of LP reconfigurable designs. As it is also evidenced, the aperture efficiency of the proposed design is relatively high, comparing to the reflectarray antennas that use a similar number of diodes or perform the same CP beam steering functionality. Degradation in the aperture efficiency of such reconfigurable reflectarrays, when compared with ordinary designs, is primarily caused by the 1 bit phase quantization and the losses introduced by the diodes. It is worthwhile to mention that the proposed design would be able to reconfigure the pattern of the reflected beam with 1 bit phase resolution when the excitation is an RHCP, LHCP, 45°-polarized LP, or 135°-polarized LP incident wave, similar to that shown in [13].
+      - type: figure
+        src: /figures/P05/tab3.png
+        caption: "TABLE III PERFORMANCE COMPARISON WITH REPORTED 1 BIT RECONFIGURABLE REFLECTARRAYS"
+      - type: aside
+        text: |
+          Table III 是引言那支箭的靶心。[13] 四管、四层、复杂度 +++，效率 15%；本文两管、两层、复杂度 +，效率 20%。线极化对照 [8][23][10] 用一只管就能 1-bit，效率 15–27%——作者的潜台词是：CP 我已经把复杂度做到跟 LP 同一档。
+
+          口径效率相对「普通无开关阵」当然低，税单写得很清楚：1-bit 量化 + 二极管损耗。别指望 1-bit PIN 阵打出 50%。你后来读的 [[P18]] 把档位加到 2-bit，口径效率报到 39.1%，就是在还这笔税。
+
+          最后一句彩蛋：同一套单元，RHCP / LHCP / 45° LP / 135° LP 入射都能 1-bit 调相位。虚旋转吃的是基模对称，不挑入射旋向。
+      - type: terms
+        items:
+          - term: "scan loss"
+            def: "扫描损耗。波束离法向越远增益掉多少。本文 φ = 0° 面 ±45° 内 ≤3 dB。"
+          - term: "feed blockage"
+            def: "馈源遮挡。偏馈所在面往回扫时，喇叭挡散射，后向 −30° 掉约 5 dB。"
+    ticket:
+      - q: "为什么 φ = 90° 后向掉 5 dB，φ = 0° 却只掉 3 dB 量级？"
+        a: "φ = 90° 是偏馈喇叭所在面，往后扫等于往喇叭背后打，遮挡。φ = 0° 没有这堵墙。"
+      - q: "Table III 里本文相对 [13] 赢在哪三格？相对最好的 LP 阵 [10] 又输在哪？"
+        a: "赢：[13] 的二极管 4→2、层数 4→2、复杂度 +++→+，效率 15%→20%。输给 [10]：那是线极化单管，效率 27%、交叉极化 −22 dB，峰值增益也略高。CP 的税没完全免掉，只是收到跟 LP 同一量级。"
+
+  - id: c7
+    title: "结论：摘要复读"
+    minutes: 1
+    intensity: skip
+    blocks:
+      - type: aside
+        text: |
+          跳过。结论把摘要再讲一遍：电磁旋转、二极管砍半、16×16 扫过了、效率还行。没有新数字、没有新限制。需要引用套话时再回来；现在去 Obsidian 写你自己的理解更值。
+    ticket:
+      - q: "结论里有没有引言没预告过的新结果？"
+        a: "没有。可以走了。"
+
+outro:
+  - "回到 Obsidian，打开 [[P05-A Circularly Polarized 1 Bit Electronically Reconfigurable Reflectarray Based on Electromagnetic Element Rotation]]，用你自己的话写下："
+  - "1. Fig. 6 三步里，哪一步是『真旋转』、哪一步是『电磁偷换』？你能不能画给自己看？"
+  - "2. 这篇只要线对称、两只管；[[P18]] 要八边形加一圈延时线。多比特是怎么从『虚转 90°』长出来的？"
+  - "3. 作者把实测 AR 变窄归咎 T2 和二极管模型。你自己做板子时，哪一个更值得在 DFM 里单独控？"
+  - "写完三条，这篇才算真正读完。"

@@ -1,0 +1,250 @@
+id: P03
+title: "A Broadband Dual-Polarized ME-Dipole Antenna Array for Millimeter-Wave Applications"
+venue: "IEEE AWPL, vol. 23, no. 11, pp. 3456–3460, Nov. 2024"
+created: "2026-08-15"
+
+map: |
+  毫米波双极化阵一直在三件事里打架：带宽、层数、两路极化长得像不像。贴片/缝隙简单但只有约 10% 带宽；SIW 馈电能到 20%，但层数和剖面往上堆；交叉 L 探针可以把带宽拉过 40%，代价是多层、贵、难做进手机。
+
+  这篇的骚操作一句话：把 Luk 那套金属块 {{ME 偶极子::magneto-electric dipole，电偶极子 + 磁偶极子互补，E/H 面方向图接近，带宽宽、方向图稳。祖师是库里的 [[P10]]}}做成基板里的砖——{{SIB::substrate integrated block，基板集成块。四根接地柱把方形贴片撑成一块"砖"，电流路径还在，但砖与砖之间腾出了给正交探针交错的空间}}；两路 L 探针不要挤在单元正中心，拉开大约半个周期交错着喂。辐射结构两路看起来一样，馈电可以印在同一层。
+
+  结果：3×3 实物交叠阻抗带宽 36.2%（21.3–30.7 GHz，盖住 5G FR2 的 n257/n258/n261），峰值增益 14.7 dBi，带内起伏 2 dB，口径效率 67.5%。辐射一层、馈电一层。通讯作者 Fan Wu，东南大学毫米波实验室。
+
+chunks:
+  - id: c1
+    title: "引言：带宽、层数、极化，三选二"
+    minutes: 10
+    blocks:
+      - type: para
+        text: |
+          Abstract—A magneto-electric dipole implemented using substrate integrated blocks (SIBs) is proposed for broadband dual-polarized array application. Facilitated by the SIB-based design approach, an interlaced arrangement of the perpendicular feeding probes is developed for dual-polarization excitation. While maintaining the wideband feature and single-layered antenna structure, nearly identical radiation characteristics for the two polarizations have been achieved. Additionally, the enlarged probe-to-probe distance increases the degree of design freedom for the feeding network. As a proof-of-concept, a 3 × 3 single-layered antenna array fed by a single-layered dual-polarization microstrip-line feeding network is designed and fabricated at the 5G millimeter-wave frequency band. The measured results indicate that the array prototype has a wide overlapped impedance bandwidth of 36.2%, covering from 21.3 to 30.7 GHz, within which a maximum gain of 14.7 dBi and a gain variation of 2 dB are maintained. The broadband performance, single-layered radiating structure, and nearly identical performance of two polarizations make the proposed design attractive for applications including 5G and beyond.
+      - type: aside
+        text: |
+          摘要里先把三张牌摊开：SIB 单元、交错正交探针、单层馈电。数字记住三个：36.2% 交叠带宽、14.7 dBi、带内 2 dB 起伏。
+
+          "nearly identical radiation characteristics for the two polarizations" 不是客气话——双极化阵最常见的翻车是两路增益和带宽对不齐。后文会反复验收这句话。
+      - type: para
+        text: |
+          The increasing demand for wireless communication systems characterizing low latency and high system capacity has propelled the elevation of communication frequency, especially the exploration of 5G millimeter-wave (mmW) bands. Several 5G frequency range 2 (FR2) operating bands have already been standardized [1]. Therefore, research on broadband mmW antenna arrays holds significant importance in achieving high system capacity and addressing the increased path loss associated with 5G mmW high-frequency transmission. Particularly, considering the integration requirements with 5G devices, a pressing demand arises for wideband mmW antenna arrays with the advantages of simple structure, low cost, and stable radiation performance [2]. Simultaneously, the dual-polarization characteristic is required to mitigate the multipath fading effects at high frequencies and minimize polarization mismatch.
+      - type: aside
+        text: |
+          标准 AWPL 开场：5G FR2 要宽带阵，还要双极化抗多径。真正的约束在后半句——还得简单、便宜、稳，因为要往终端里塞。后文所有设计选择都在给这四个形容词打工。
+      - type: para
+        text: |
+          Over the past decade, sustained research has been conducted on the development of mmW dual-polarized antenna arrays. Slot and patch antennas have undergone substantial developments at mmW dual-polarized antennas [3], [4], [5], [6]. These designs, while simple in structure, can only achieve narrow impedance bandwidths of around 10%. Afterward, by adopting feeding techniques based on substrate-integrated waveguide (SIW) structure, cross-slot coupling, or orthogonal aperture-coupled stripline, the operating bandwidth of mmW dual-polarized antenna arrays has been extended to about 20% [7], [8], [9]. However, the structures of these antenna arrays are relatively complex, featuring a comparatively high profile or an excessive number of substrate layers, which are not feasible for deployment in portable 5G devices.
+      - type: aside
+        text: |
+          对比表的雏形：简单方案 ~10%，SIW/缝耦合把带宽抬到 ~20%，层数和剖面跟着涨。"portable 5G devices" 是作者给自己设的及格线——多层方案直接出局。
+      - type: para
+        text: |
+          Magneto-electric (ME) dipole antennas, with a wide impedance bandwidth and stable radiation performance, are competitive solutions to achieve mmW antenna arrays [10], [11], [12], [13], [14], [15], [16], [17], [18], [19]. By using SIW feeding structures, mmW dual-polarized ME-dipole antenna arrays have been realized in [11] and [12]. Unfortunately, in these SIW-fed antennas, the bandwidth limitation of the SIW-feeding structure curtails the further expansion of the achievable bandwidth of the antenna. Subsequently, by utilizing crossed L-shaped probes, wideband dual-polarized ME-dipole antenna arrays, which achieve impedance bandwidths of over 40%, are reported in [13], and [14]. However, the implementation of such dual-polarization feeds and power-dividing networks requires a rather complex multi-layer structure that increases the fabrication cost.
+      - type: aside
+        text: |
+          ME 偶极子这条线你库里很熟：祖师 [[P10]]，毫米波印刷版 [[P02]]、[[P20]]，双极化透射阵 [[P08]]、[[P21]]。作者承认交叉 L 探针能把带宽拉过 40%，但多层馈电把成本吃掉了。
+
+          题眼句就在这句 unfortunately：SIW 馈电自己先把带宽封顶了。所以要宽带，就别用 SIW 当功分；要单层，就别让两根探针挤在同一个点上。下一棒交接点清楚了。
+      - type: para
+        text: |
+          In this letter, based on the ME dipole implemented using metallic blocks in [20], a block-shaped structure named substrate integrated block (SIB) is proposed. The SIB is a substrate-integrated form of the metallic blocks. By introducing the SIB, a broadband dual-polarized ME-dipole antenna array is presented. The dual-polarized radiation is excited by using two groups of interlaced perpendicular L-shaped feeding probes. As such, balanced radiation performances for the two polarizations can be achieved, and both the antenna structure and feeding networks can be implemented on a single layer. Compared to previously reported work, this design requires only two substrate layers, providing notable advantages of simple structure and low cost. The measured results of the proposed array show a wide overlapped impedance bandwidth of 36.2%, as well as a stable gain in the operational frequency range, which covers the 5G FR2 bands n257, n258, and n261.
+      - type: terms
+        items:
+          - term: "SIB (substrate integrated block)"
+            def: "基板集成块。把金属块 ME 偶极子改成介质基板里用金属柱撑起来的砖，电流路径还在，工艺变成普通 PCB。"
+          - term: "overlapped impedance bandwidth"
+            def: "交叠阻抗带宽。两路极化各自 |S11|<-10 dB 的交集，双极化阵真正能用的带宽。摘要 36.2% 指的是这个，不是某一路自己的带宽。"
+          - term: "FR2 n257 / n258 / n261"
+            def: "5G 毫米波频段。n257：26.5–29.5 GHz；n258：24.25–27.5 GHz；n261：27.5–28.35 GHz。21.3–30.7 GHz 把这三条都盖住了。"
+          - term: "ME dipole"
+            def: "磁电偶极子。电偶极子（贴片）和磁偶极子（短路墙+地板缝）一起工作，带宽宽、E/H 面方向图接近。库里 [[P10]] 是奠基。"
+    ticket:
+      - q: "作者为什么不用交叉 L 探针那条 40% 带宽的现成路？"
+        a: "带宽够，但馈电和功分要多层，成本和剖面不符合 portable 5G。这篇的目标不是把带宽刷到最高，而是在单层辐射+单层馈电的约束下拿到可用的宽带双极化。"
+      - q: "SIB 相对 [20] 的金属块，改的是物理还是工艺？"
+        a: "物理图像还是那块砖；改的是实现——金属块变成基板里的接地柱阵列，能跟普通多层 PCB 一起做。"
+
+  - id: c2
+    title: "对角再打一排柱：SIB 怎么长出来"
+    minutes: 10
+    blocks:
+      - type: para
+        text: |
+          The proposed ME dipole is designed on a piece of TLY-5 substrate with εr = 2.2 and is fed by a coaxial cable, as shown in Fig. 1(b)–(d). The operational mechanism of the proposed design can be explained by starting with a conventional linearly-polarized (LP) ME dipole that consists of four square patches, four sets of metallic posts connecting the patches with the metallic ground and an L-shaped probe, as shown in Fig. 1(a). The patches situated on the upper surface of the substrate are employed to form a pair of electric dipoles. The metallic posts, function as vertical metallic walls, creating a magnetic dipole in conjunction with the metallic ground plane. The L-shaped probe is centrally positioned for the purpose of excitation.
+      - type: figure
+        src: /figures/P03/fig1.png
+        caption: "Fig. 1. (a) Perspective view of a conventional LP ME dipole. Geometry of the proposed ME dipole: (b) perspective view, (c) top view, and (d) side view. Dimensions are l1 = 2.3, l2 = 3.5, s1 = 0.95, s2 = 0.15, s3 = 0.5, s4 = 1.2, w1 = 0.6, d1 = 0.4, d2 = 0.2, h1 = 1.575 (unit: mm)."
+      - type: aside
+        text: |
+          Fig. 1(a) 就是课堂版 ME 偶极子：四块贴片当电偶极子，内侧一排柱子当磁墙，中间一根 L 探针。你库里 [[P10]]、[[P02]] 看过这个图像就不会陌生。
+
+          尺寸锚点：h1 = 1.575 mm，大约是 26 GHz 在 εr=2.2 介质里的四分之一波长量级——磁偶极子高度的老规矩还在。
+      - type: para
+        text: |
+          A minor yet crucial modification is then introduced to this conventional design for broadband dual-polarization array application. As shown in Fig. 1(b), by adding additional sets of metallic grounding posts at the opposite diagonal corners of the square patches, four SIBs can, therefore, be realized. The proposed SIBs still offer similar current paths that allow the realizations of both the E- and M-dipoles, as demonstrated by the simulated current distributions and electric fields of the antenna over a quarter periodic of time (T/4) shown in Fig. 2. When t = 0, the current on the horizontal patches reaches its maximum, and the electric fields at the aperture of the gap are weak. When t = T/4, the currents are primarily distributed on the metallic posts near the center that serve as the metallic wall, and the electric fields at the aperture are strong. These simulated field distributions indicate that the proposed ME dipole works properly as expected since the E- and M-dipole are both rightly excited. However, it should be noted that the newly added metallic posts at the four outside corners of the ME dipole would result in the grounding of the patches at the tails, introducing perturbations to not only the E-dipole but also the M-dipole. This would primarily lead to a shift in the operational frequency of the ME dipole. But nearly the same impedance bandwidth compared to the original design can be secured if the geometry is well optimized for good matching.
+      - type: figure
+        src: /figures/P03/fig2.png
+        caption: "Fig. 2. Simulated current distributions and electric fields of the proposed ME-dipole antenna at 26 GHz: (a) current distributions and (b) electric fields at different times."
+      - type: aside
+        text: |
+          "minor yet crucial" 是全文最小的那一刀：贴片外侧对角再打一排接地柱，四块贴片各自变成一块 SIB。
+
+          Fig. 2 是 ME 偶极子的身份证：t=0 电流在贴片上（电偶极子忙），t=T/4 电流跑到中央柱墙上、缝里电场最强（磁偶极子忙）。两个差四分之一周期，互补天线该有的节拍。
+
+          作者自己把坑写出来了：外侧柱把贴片尾巴接地，E 和 M 都会被扰动，主要是谐振频率挪一下。带宽还能保住，前提是尺寸重新优化——不是免费加柱。
+      - type: terms
+        items:
+          - term: "electric dipole / magnetic dipole"
+            def: "电偶极子是贴片上的水平电流；磁偶极子是接地柱墙与地板缝形成的等效磁流。两者差 T/4 轮流上场，才叫 ME 偶极子。"
+          - term: "L-shaped probe"
+            def: "L 形探针。竖段从下层穿上来，横段悬在贴片缝里耦合。经典 ME 偶极子的喂法。"
+          - term: "TLY-5"
+            def: "Taconic 低损耗微波板，εr=2.2。这篇辐射层用 1.575 mm，馈电层后面会换成 0.254 mm。"
+    ticket:
+      - q: "加外侧接地柱之后，ME 偶极子还是不是原来那个？"
+        a: "电流路径还在（Fig. 2 的 T/4 节拍还在），但贴片尾巴被接地，谐振会被挪。作者说优化几何可以保住带宽——SIB 是可优化的微扰，不是换了一种天线。"
+      - q: "为什么必须做成四块独立的砖，而不是继续用 Fig. 1(a) 那种开放贴片？"
+        a: "开放贴片的中心被一根探针占满，正交再塞一根就得叠层。做成 SIB 之后，砖缝里可以交错走两路探针，这是为下一节的双极化布局腾地方。"
+
+  - id: c3
+    title: "探针拉开半个周期：双极化不用叠层"
+    minutes: 10
+    blocks:
+      - type: para
+        text: |
+          To demonstrate the feasibility of constructing a dual-polarized array using the proposed design, the element is employed to design a two-dimensional array, as shown in Fig. 3(a). By adopting two groups of perpendicularly oriented and interlaced probes, orthogonal linear polarizations can be obtained. In contrast to the conventional dual-polarization feeding approach [13], [14], where the perpendicular probes are placed in close proximity, the probes here are designed to be physically distanced from each other by roughly half of the element spacing, facilitating the implementation of dual-polarization feeding structures and networks in a simpler manner (shown later in Section III). Besides, the introduction of the SIBs makes the radiating structure seen by the two groups of perpendicular probes identical, as indicated by the red and green boxes shown in Fig. 3(a), which leads to similar performances, including the gain and bandwidth for the two polarizations. The corresponding unit cell for fast evaluation of element performance in an array can be found in Fig. 3(b). The simulated S-parameters at the two feeding ports in one unit cell are shown in Fig. 4. The simulated results indicate that the proposed ME dipole achieves an overlapped −10 dB impedance bandwidth of 35.1%, spanning from 21.05 to 30 GHz. The mutual coupling between the two ports is found to be lower than −25 dB in the frequency range of interest.
+      - type: figure
+        src: /figures/P03/fig3.png
+        caption: "Fig. 3. Configuration of the dual-polarization design: (a) two-dimensional array (top view) and (b) the unit cell."
+      - type: figure
+        src: /figures/P03/fig4.png
+        caption: "Fig. 4. Simulated S-parameters of the proposed element in an infinite array environment."
+      - type: aside
+        text: |
+          Fig. 3(a) 红框绿框是全文最值得盯的构图：两路探针看到的辐射结构是同一套 SIB 网格，只是探针方向差 90°。这就是"nearly identical"的几何保证，不是事后调参调出来的。
+
+          探针间距约半个周期——隔离自然好（Fig. 4 里 S21 < −25 dB），更重要的是两套微带功分可以印在同一层，不用再加一层铜来避免交叉短路。
+
+          无限大阵单元 35.1% 带宽，后面 3×3 实测 36.2%，对得上。单元仿真已经把成绩单写好了。
+      - type: para
+        text: |
+          A conceptual drawing of the proposed dual-polarized array is plotted in Fig. 5(b) and is compared with one typical conventional design [14] shown in Fig. 5(a). In the conventional approach, the crossed-feeding probes are situated at the center of one antenna element, leading to a small probe-to-probe distance and the need of an additional copper layer to avoid direct contact with the two perpendicular probes. In contrast, in the proposed design, the distance between the adjacent perpendicular probes is greatly enlarged. As such, the feeding probes for both polarizations can be designed on the same copper layer, thereby reducing the total substrate layers with a simplified structure. Another notable advantage of this arrangement is that the enlarged distance between orthogonal feeding probes makes the implementation of dual-polarization feeding networks in a single layer more practical.
+      - type: figure
+        src: /figures/P03/fig5.png
+        caption: "Fig. 5. Comparison of two feeding structures for dual-polarized array: (a) conventional design and (b) design proposed in this work."
+      - type: aside
+        text: |
+          Fig. 5 是"为什么我比 [14] 少一层"的示意图。左边交叉探针挤在单元中心，两根线必碰，只能再加一层铜隔开；右边探针错开，同一层走得下。
+
+          看论文的通用技巧：作者把结构优势画成对比图，比在引言里骂多层更有说服力。你自己写 AWPL 也可以学这一招。
+      - type: terms
+        items:
+          - term: "interlaced probes"
+            def: "交错探针。x 极化探针和 y 极化探针不共用一个交叉点，而是在网格里错开约半个周期。"
+          - term: "unit cell / infinite array"
+            def: "周期单元。四周 periodic、上下辐射边界，用来快速估阵中单元的匹配和隔离，避免一上来就仿真整阵。"
+          - term: "mutual coupling"
+            def: "互耦。这里主要指两路极化端口之间的 S21。无限大阵 < −25 dB，后面实物 < −22.5 dB。"
+    ticket:
+      - q: "交错探针解决的是带宽问题还是布线问题？"
+        a: "主要是布线。带宽来自 ME 偶极子本身；交错是为了让两路馈电能印在同一层，并且让两路看到相同的辐射结构。"
+      - q: "Fig. 3 红框和绿框在证明什么？"
+        a: "两路极化面对的是同一套 SIB 几何，只是探针方向不同。所以增益和带宽理应对齐，不是靠两套不同贴片硬凑。"
+
+  - id: c4
+    title: "3×3 实物：36.2% 和 14.7 dBi"
+    minutes: 10
+    blocks:
+      - type: para
+        text: |
+          As a proof-of-concept validation, a 3 × 3 dual-polarized ME-dipole array is designed, as illustrated in Fig. 6(a). The horizontal portion of the probes and patches are printed on the top side, while the microstrip-line feeding networks are distributed on the bottom surface. An adhesive thin film (Rogers RO4450F) was used to bond the two layers together. By employing nine probes for each polarization to excite the elements, this layout generates a 3 × 3 ME-dipole array for each of the two polarizations. The dimensions of the antenna elements are fine-tuned in the array design to keep a good match. The optimized element spacing is 6.55 mm (0.57λ0) in both of the two directions, where λ0 is the free space wavelength at center frequency f0 (26 GHz). As shown in Fig. 6(b), the microstrip-line feeding network, i.e., the one-to-nine power divider, is designed by cascading several one-to-three equal power dividers. Thanks to the interlaced probe arrangement, two identical feeding networks for launching the two orthogonal polarizations can be realized on the same layer.
+      - type: figure
+        src: /figures/P03/fig6.png
+        caption: "Fig. 6. Configuration of the dual-polarized antenna array: (a) exploded view of the whole array and (b) microstrip-line feeding networks (bottom view). Dimensions of the feeding networks are w1 = 0.64, w2 = 0.17, w3 = 0.5, w4 = 0.7, w5 = 0.17, w6 = 0.36 (unit: mm)."
+      - type: aside
+        text: |
+          层叠很干净：上面 TLY-5 1.575 mm 辐射，中间一层薄粘合膜 RO4450F 0.101 mm，底下 TLY-5 0.254 mm 走微带。总共两层介质，对应摘要"only two substrate layers"。
+
+          单元间距 0.57λ0——不到一个波长，扫描阵会更在意栅瓣，这篇是固定波束 proof-of-concept，这个间距主要是为了塞下交错探针和功分。
+
+          Fig. 6(b) 两套一分为九长得一样，只是旋转/平移，这是交错布局的红利：不用为第二极化再发明一套功分。
+      - type: para
+        text: |
+          A prototype of the 3 × 3 ME-dipole array, measuring a 46 × 28 mm2 physical size (4 × 2.4λ0²), was fabricated to experimentally validate the methodology. As shown in Fig. 7, a section of the top substrate of the prototype is removed to expose the underlying metallic ground plane by computer numerical control machining for the purpose of realizing better contact of the connectors with the antenna ground plane. A network analyzer was employed to measure the reflection coefficients, while the array performances were characterized in a far-field chamber. S-parameters and gains of the array are depicted in Fig. 8. Good agreement between the simulated and measured S-parameters can be observed. The measured results showcase an overlapped −10 dB bandwidth of 36.2% (from 21.3 to 30.7 GHz), with the |S21| less than −22.5 dB in the same frequency range. The measured gain is up to 14.7 and 14.6 for x- and y-polarizations, respectively. The simulated and measured results show similar trends as frequency changes, though the measured results are slightly lower than the simulated ones from 26 to 31 GHz. The inconsistency is suspected to be caused by fabrication uncertainties. Besides, the variation of gain is within 2 dB in the operational frequency range.
+      - type: figure
+        src: /figures/P03/fig7.png
+        caption: "Fig. 7. Photographs of the prototype: (a) top view and (b) bottom view."
+      - type: figure
+        src: /figures/P03/fig8.png
+        caption: "Fig. 8. S-parameters and gains of the 3 × 3 ME-dipole antenna array."
+      - type: aside
+        text: |
+          Fig. 7 上表面那一排被铣掉的介质是工程细节：让 Southwest 接头更好地贴地。看实物图要会找这种"为了测得准而做的小手术"。
+
+          Fig. 8 两路增益几乎贴在一起，交叠带宽 36.2% 对上摘要。26–31 GHz 实测增益略低，作者归到加工误差——诚实，但没给误差预算。隔离实测 −22.5 dB，比无限大阵的 −25 dB 差一点，3×3 有限阵加接头，这个落差正常。
+
+          口径只有 4×2.4 λ0² 的矩形，14.7 dBi 配 67.5% 口径效率（Table I）量级合理。
+      - type: terms
+        items:
+          - term: "one-to-nine power divider"
+            def: "一分为九。三个一分为三串起来。两路极化各做一套，印在同一层。"
+          - term: "RO4450F"
+            def: "Rogers 预浸料/粘合膜，这篇用来把辐射层和馈电层粘在一起，厚 0.101 mm。"
+          - term: "gain variation"
+            def: "带内增益起伏。摘要和实测都卡在 2 dB，是'方向图稳'的量化说法。"
+    ticket:
+      - q: "为什么实物是 46×28 mm 的长方形，而不是正方形？"
+        a: "两套功分都沿一个方向铺开，还要给接头留贴地的铣削区，口径被拉成 4×2.4 λ0²。这是 proof-of-concept 的布局，不是为了最大口径效率去优化外形。"
+      - q: "无限大阵隔离 −25 dB、实物 −22.5 dB，该不该担心？"
+        a: "差 2.5 dB，有限阵、接头和功分都会贡献。绝对值仍优于 −20 dB，双极化终端够用。别把单元周期仿真的隔离直接当整机指标。"
+
+  - id: c5
+    title: "方向图、对照表、该带走什么"
+    minutes: 8
+    blocks:
+      - type: para
+        text: |
+          Figs. 9 and 10 illustrate the simulated and measured radiation patterns of the two polarizations at 21.5, 26, and 30.5 GHz. The results agree well with each other in terms of the beamwidth and the sidelobe level. The beamwidth of the main lobe gradually decreases as the frequency increases. The side lobe level remains below −10 dB for both of the two polarizations across the operating band. The cross-polarization at main beam directions is lower than −13 dB at 21.5 and 26 GHz and around −11 dB at 30.5 GHz. In addition, the two polarizations show similar performance, but with slight differences in sidelobe level and cross-polarization. As shown in Fig. 6, the two feeding networks can be regarded as placed along the y-axis, while the two sets of probes are placed along the x- and y-axis, respectively. The discrepancy between the radiation patterns of the two polarizations can be attributed to the difference in the relative positions of their radiating structures and feeding networks.
+      - type: figure
+        src: /figures/P03/fig9.png
+        caption: "Fig. 9. Normalized radiation patterns of the antenna array when port 1 (y-polarization) is excited: (a) 21.5, (b) 26, and (c) 30.5 GHz."
+      - type: figure
+        src: /figures/P03/fig10.png
+        caption: "Fig. 10. Normalized radiation patterns of the antenna array when port 2 (x-polarization) is excited: (a) 21.5, (b) 26, and (c) 30.5 GHz."
+      - type: aside
+        text: |
+          方向图三条观察：主瓣随频率变窄（口径电尺寸变大，正常）；旁瓣全程 < −10 dB（3×3 很小，别期望很低的旁瓣）；交叉极化到 30.5 GHz 松到 −11 dB——高频是短板。
+
+          作者没装两路完全一样：功分都沿 y 铺、探针一路沿 x 一路沿 y，相对位置不对称，旁瓣和交叉极化就会有差。把不对称写清楚，比硬说 identical 更可信。
+      - type: para
+        text: |
+          The configurations and performance metrics of previously published dual-polarized antenna array designs are summarized and compared with the proposed work in Table I. Compared with designs reported in [7], [8], [11], and [12], this work shows a wider impedance bandwidth of 36.2%. Benefitting from the SIB-based design approach and interlaced perpendicular feeding probes, the proposed array has less substrate layers than the reported designs, which is cost-effective and easier to fabricate. Moreover, the nearly identical array performances for the two polarizations are also obtained, further balancing the performance of gain stability and bandwidth.
+      - type: figure
+        src: /figures/P03/tab1.png
+        caption: "TABLE I. Comparison of the array in this work and those in references."
+      - type: aside
+        text: |
+          Table I 怎么读：别拿 14.7 dBi 去跟 [7] 的 22.3 dBi 比——人家 8×8。看层数和带宽。本文辐射 1 层 + 馈电 1 层，带宽 36.2%，口径效率 67.5%。
+
+          [14] 带宽 47.1% 更宽，但辐射 3 层，增益起伏 4 dB。作者的卖点不是每一格都第一，而是"两层板做到 36% 且两路对齐"。
+
+          [11]、[12] 也是 ME 偶极子，对照更亲：它们不是馈电层更多，就是隔离或带宽更窄。SIB + 交错探针这条路，打的是同一门派的工艺复杂度。
+      - type: para
+        text: |
+          A broadband dual-polarized 3 × 3 ME-dipole antenna array has been proposed in this work for mmW application. By utilizing the SIBs and interlaced perpendicular feeding probes, the array achieves balanced dual-polarization performances within a wide frequency range in a simple structure. The fabricated prototype experimentally demonstrates an overlapped impedance bandwidth of 36.2%, a maximum gain of 14.7 dBi and a gain variation of less than 2 dB. The attractive dual-polarization characteristics, as well as the single-layered radiating structure, make the proposed array competitive for many portable applications.
+      - type: terms
+        items:
+          - term: "aperture efficiency"
+            def: "口径效率。Table I 里本文 67.5%（中心频率）。3×3 小阵这个数好看，放大阵还要重新验照射和互耦。"
+          - term: "cross-polarization"
+            def: "交叉极化。主瓣方向本文 21.5/26 GHz < −13 dB，30.5 GHz 约 −11 dB，高频是弱项。"
+    ticket:
+      - q: "Table I 里这篇真正赢在哪一列？"
+        a: "层数（辐射 1 + 馈电 1）叠上 36.2% 交叠带宽，再加两路性能对齐。峰值增益和隔离都不是表里最好的，作者也没假装是。"
+      - q: "两路方向图为什么不能做到完全一样？"
+        a: "功分网络都沿 y 放，两套探针分别沿 x 和 y，辐射结构相对馈电的位置不对称。几何上就已经不可能完全相同，作者把差异归因写出来了。"
+
+outro:
+  - "回到 Obsidian，打开 [[P03-A Broadband Dual-Polarized ME-Dipole Antenna Array for Millimeter-Wave Applications]]，用你自己的话写下："
+  - "1. SIB 相对 Fig. 1(a) 的经典 ME 偶极子，到底改了哪一刀？这刀是为带宽还是为布线？"
+  - "2. 交错探针如何让两路极化看到同一套辐射结构？画一张你自己的红框绿框。"
+  - "3. 若把这个单元拿去当可重构阵的辐射体，0.57λ0 间距和单层馈电，哪个会先成为瓶颈？"
+  - "你在笔记里写过『单元的结构基础』——读完这三问，把那句话展开成自己的判断。"
